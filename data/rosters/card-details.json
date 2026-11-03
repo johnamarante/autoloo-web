@@ -1,0 +1,614 @@
+{
+  "_about": "Card-facing details that the roster CSVs do not carry. Units with a 'unitId' take their stats, max rank, tier, shop chance and company rules from data/units.json (the Unity prefabs), like the game does; the rest use the CSV row named in 'csvName'. Status always comes from the CSV. Ability text tokens: {R} is the unit's current rank, {R+n} adds n. Tier and cost come from the Unity prefabs where one exists; otherwise they are best guesses (see 'tierSource'). Pictures: 'sprite' is one sprite; 'art' lists layered sprites back to front, as the prefab draws them (for example a gun, then its gunner). Every path needs an entry in data/sprites.json.",
+  "rosters": {
+    "france": {
+      "file": "france-1815.csv",
+      "name": "France",
+      "army": "Armée du Nord, 1815",
+      "units": [
+        {
+          "id": "fr-line",
+          "unitId": "french_line",
+          "csvName": "Infanterie de ligne",
+          "displayName": "Infanterie de Ligne",
+          "role": "Line Infantry",
+          "type": "infantry",
+          "formsSquare": true,
+          "tier": 1,
+          "tierSource": "prefab",
+          "cost": 3,
+          "sprite": "france/french_line_left_2_1_.svg",
+          "abilities": [],
+          "attachments": [
+            {
+              "csvName": "Voltiguers (ligne)",
+              "displayName": "Voltigeurs",
+              "kind": "skirmisher",
+              "unlockRank": 1,
+              "sprite": "france/french_linevoltiguer_left_2_-1_.svg",
+              "trigger": "front",
+              "keyword": "Skirmish",
+              "text": "Step out ahead of the battalion. If the line is full, the battalion gets +1 attack instead."
+            },
+            {
+              "csvName": "Grenadiers",
+              "displayName": "Grenadiers",
+              "kind": "grenadier",
+              "unlockRank": 2,
+              "sprite": "france/french_linegrenadier_left_1_1_.svg",
+              "trigger": "death",
+              "keyword": "Reserve",
+              "text": "Take the battalion's place when it falls."
+            }
+          ]
+        },
+        {
+          "id": "fr-legere",
+          "unitId": "french_chassuer",
+          "csvName": "Infanterie de legere/Chassuers",
+          "displayName": "Chasseurs (Légère)",
+          "role": "Light Infantry",
+          "type": "infantry",
+          "formsSquare": true,
+          "tier": 1,
+          "tierSource": "prefab",
+          "cost": 3,
+          "sprite": "france/french_chasseur_left_3_1_.svg",
+          "abilities": [],
+          "attachments": [
+            {
+              "csvName": "Voltiguers (legere)",
+              "displayName": "Voltigeurs",
+              "kind": "skirmisher",
+              "unlockRank": 0,
+              "sprite": "france/french_legerevoltiguer_left_2_-1_.svg",
+              "trigger": "front",
+              "keyword": "Skirmish",
+              "text": "Dart ahead, strike once, then withdraw. If the line is full, the battalion gets +1 attack instead."
+            },
+            {
+              "csvName": "Carabiners a pied",
+              "displayName": "Carabiniers",
+              "kind": "grenadier",
+              "unlockRank": 2,
+              "sprite": "france/french_carabinerapied_left_0_1_.svg",
+              "trigger": "death",
+              "keyword": "Reserve",
+              "text": "Take the battalion's place when it falls. When first unlocked, all your infantry gain +1/+1."
+            }
+          ]
+        },
+        {
+          "id": "fr-hussar",
+          "unitId": "french_hussar",
+          "csvName": "Hussar",
+          "displayName": "Hussards",
+          "role": "Light Cavalry",
+          "type": "cavalry",
+          "tier": 1,
+          "tierSource": "prefab",
+          "cost": 3,
+          "sprite": "france/french_hussar_left_0_2_.svg",
+          "abilities": [
+            { "trigger": "deploy", "keyword": "Scout", "text": "Reveal the enemy army before you end your turn." },
+            { "trigger": "kill", "keyword": "Win Buff", "text": "Gain +1/+1." }
+          ]
+        },
+        {
+          "id": "fr-lancer",
+          "unitId": "french_lancer",
+          "csvName": "Lancer",
+          "displayName": "Chevau-légers Lanciers",
+          "role": "Lancers",
+          "type": "cavalry",
+          "tier": 1,
+          "tierSource": "prefab",
+          "cost": 3,
+          "sprite": "france/french_lancer_left_0_2_.svg",
+          "abilities": [
+            { "trigger": "firstClash", "keyword": "Lance Charge", "text": "Deals full damage to infantry in square." }
+          ]
+        },
+        {
+          "id": "fr-cuirassier",
+          "unitId": "french_cuirassier",
+          "csvName": "Cuirassier",
+          "displayName": "Cuirassiers",
+          "role": "Heavy Cavalry",
+          "type": "cavalry",
+          "tier": 1,
+          "tierSource": "prefab",
+          "cost": 3,
+          "sprite": "france/french_cuirassier_left_0_2_.svg",
+          "abilities": [
+            { "trigger": "kill", "keyword": "Win Buff", "text": "Gain +{R+1}/+{R+1}." }
+          ]
+        },
+        {
+          "id": "fr-carabinier-cheval",
+          "csvName": "Carabiners a cheval",
+          "displayName": "Carabiniers à Cheval",
+          "role": "Heavy Cavalry",
+          "type": "cavalry",
+          "tier": 2,
+          "tierSource": "guess",
+          "cost": 3,
+          "sprite": "france/french_carabineracheval_left_0_2_.svg",
+          "abilities": [
+            { "trigger": "deploy", "keyword": "Rally", "text": "All your other cavalry gain +1/+1." },
+            { "trigger": "kill", "keyword": "Win Buff", "text": "Gain +{R+1}/+{R+1}." }
+          ]
+        },
+        {
+          "id": "fr-guard-voltigeurs",
+          "csvName": "Voltigeurs de la Garde Impériale",
+          "displayName": "Voltigeurs de la Garde",
+          "role": "Young Guard",
+          "type": "infantry",
+          "formsSquare": true,
+          "tier": 2,
+          "tierSource": "guess",
+          "cost": 3,
+          "sprite": "france/french_youngguard_voltiguers_left.svg",
+          "abilities": [
+            { "trigger": "death", "keyword": "Rearguard", "text": "If a unit stands behind it, return with half attack and half health." }
+          ]
+        },
+        {
+          "id": "fr-tirailleurs",
+          "unitId": "french_youngguardtirailleurs",
+          "csvName": "Tirailleurs",
+          "displayName": "Tirailleurs de la Garde",
+          "role": "Young Guard",
+          "type": "infantry",
+          "formsSquare": true,
+          "tier": 2,
+          "tierSource": "guess",
+          "cost": 3,
+          "sprite": "france/french_youngguard_triauller_left_2_2_.svg",
+          "abilities": [
+            { "trigger": "deploy", "keyword": "Bolster Morale", "text": "All your other infantry gain +1/+1." }
+          ]
+        },
+        {
+          "id": "fr-guard-chasseurs",
+          "csvName": "Chasseurs-à-Pied de la Garde Impériale",
+          "displayName": "Chasseurs à Pied de la Garde",
+          "role": "Old Guard",
+          "type": "infantry",
+          "formsSquare": true,
+          "tier": 3,
+          "tierSource": "guess",
+          "cost": 3,
+          "sprite": null,
+          "abilities": [
+            { "trigger": "eachCycle", "keyword": "Imperial Example", "text": "All your infantry gain +1 attack." }
+          ]
+        },
+        {
+          "id": "fr-guard-grenadiers",
+          "unitId": "french_oldguardgrenadier",
+          "csvName": "Grenadiers-à-Pied de la Garde Impériale",
+          "displayName": "Grenadiers à Pied de la Garde",
+          "role": "Old Guard",
+          "type": "infantry",
+          "formsSquare": true,
+          "tier": 3,
+          "tierSource": "prefab",
+          "cost": 3,
+          "sprite": "france/french_imperialguardgrenadier_left_2_2_.svg",
+          "abilities": [
+            { "trigger": "eachCycle", "keyword": "Steadfast", "text": "All your other infantry gain +1 health." }
+          ]
+        },
+        {
+          "id": "fr-heavy-artillery",
+          "unitId": "french_heavyartillery",
+          "csvName": "Heavy Artillery",
+          "displayName": "Artillerie à Pied",
+          "role": "12-pounder Battery",
+          "type": "artillery",
+          "range": 5,
+          "tier": 1,
+          "tierSource": "prefab",
+          "cost": 3,
+          "art": ["france/french_12poundercannon_left_1_1_.svg", "france/french_heavyartillery_right_0_1_.svg"],
+          "abilities": [
+            { "trigger": "battle", "keyword": "Round Shot", "text": "From up to 5 places back, fire at the enemy's front unit." },
+            { "trigger": "front", "keyword": "Canister", "text": "At the front, fire grapeshot at close range." }
+          ]
+        }
+      ]
+    },
+    "britain": {
+      "file": "great-britain-1815.csv",
+      "name": "Britain & Allies",
+      "army": "Anglo-Allied Army, 1815",
+      "units": [
+        {
+          "id": "gb-foot",
+          "unitId": "british_foot",
+          "csvName": "Foot, Center Company (Line Infantry)",
+          "displayName": "Regiment of Foot",
+          "role": "Line Infantry",
+          "contingent": "British",
+          "type": "infantry",
+          "formsSquare": true,
+          "tier": 1,
+          "tierSource": "prefab",
+          "cost": 3,
+          "sprite": "britain/british_footcenter_left_3_1_.svg",
+          "abilities": [],
+          "attachments": [
+            {
+              "csvName": "Foot, Light company",
+              "displayName": "Light Company",
+              "kind": "skirmisher",
+              "unlockRank": 0,
+              "sprite": "britain/british_footskirmisher_left_3_0_.svg",
+              "trigger": "front",
+              "keyword": "Skirmish",
+              "text": "Step out ahead of the battalion. If the line is full, the battalion gets +1 attack instead."
+            },
+            {
+              "csvName": "Foot, Grenadier company",
+              "displayName": "Grenadier Company",
+              "kind": "grenadier",
+              "unlockRank": 3,
+              "sprite": "britain/british_footgrenadier_left_3_1_.svg",
+              "trigger": "death",
+              "keyword": "Reserve",
+              "text": "Take the battalion's place when it falls."
+            }
+          ]
+        },
+        {
+          "id": "gb-brunswick-line",
+          "csvName": "Brunswicker Line",
+          "displayName": "Brunswick Line",
+          "role": "Line Infantry",
+          "contingent": "Brunswick",
+          "type": "infantry",
+          "formsSquare": true,
+          "tier": 1,
+          "tierSource": "guess",
+          "cost": 3,
+          "sprite": "britain/british_brunswickline_left.svg",
+          "abilities": [],
+          "attachments": [
+            {
+              "csvName": "Lieb Batallion",
+              "displayName": "Leib Battalion",
+              "kind": "grenadier",
+              "unlockRank": 2,
+              "sprite": "britain/brunswick_leib_left_outlined.svg",
+              "trigger": "death",
+              "keyword": "Reserve",
+              "text": "Take the battalion's place when it falls."
+            },
+            {
+              "csvName": "Advance Guard",
+              "displayName": "Advance Guard",
+              "kind": "skirmisher",
+              "unlockRank": 3,
+              "sprite": "britain/british_brunswickerjager_left_1_1_.svg",
+              "trigger": "front",
+              "keyword": "Skirmish",
+              "text": "Step out ahead of the battalion. If the line is full, the battalion gets +1 attack instead."
+            }
+          ]
+        },
+        {
+          "id": "gb-brunswick-hussars",
+          "csvName": "Burnswick \"Death's Head\" Hussars",
+          "displayName": "Black Brunswick Hussars",
+          "role": "Light Cavalry",
+          "contingent": "Brunswick",
+          "type": "cavalry",
+          "tier": 1,
+          "tierSource": "guess",
+          "cost": 3,
+          "sprite": null,
+          "abilities": [
+            { "trigger": "deploy", "keyword": "Scout", "text": "Reveal the enemy army before you end your turn." },
+            { "trigger": "kill", "keyword": "Momentum", "text": "Gain +1/+1." }
+          ]
+        },
+        {
+          "id": "gb-nassau",
+          "unitId": "british_nassaurfusilier",
+          "csvName": "Nassau Fusiliers",
+          "displayName": "Nassau Fusiliers",
+          "role": "Line Infantry",
+          "contingent": "Nassau",
+          "type": "infantry",
+          "formsSquare": true,
+          "tier": 1,
+          "tierSource": "prefab",
+          "cost": 3,
+          "sprite": "britain/british_nassaurfusilier_left_3_0_.svg",
+          "abilities": [],
+          "attachments": [
+            {
+              "csvName": "Nassau Voltiguers",
+              "displayName": "Voltigeurs",
+              "kind": "skirmisher",
+              "unlockRank": 1,
+              "sprite": "britain/british_nassauvoltiguer_left_3_0_.svg",
+              "trigger": "front",
+              "keyword": "Skirmish",
+              "text": "Step out ahead of the battalion. If the line is full, the battalion gets +1 attack instead."
+            },
+            {
+              "csvName": "Nassau Grenadiers",
+              "displayName": "Grenadiers",
+              "kind": "grenadier",
+              "unlockRank": 2,
+              "sprite": "britain/british_nassaugrenadier_left_2_1_.svg",
+              "trigger": "death",
+              "keyword": "Reserve",
+              "text": "Take the battalion's place when it falls."
+            }
+          ]
+        },
+        {
+          "id": "gb-belgian-line",
+          "csvName": "Belgian Line",
+          "displayName": "Belgian Line",
+          "role": "Line Infantry",
+          "contingent": "Netherlands",
+          "type": "infantry",
+          "formsSquare": true,
+          "tier": 1,
+          "tierSource": "guess",
+          "cost": 3,
+          "sprite": "britain/british_belgianline_left.svg",
+          "abilities": [
+            { "trigger": "shop", "keyword": "United Netherlands", "text": "Free if you bought Dutch Line earlier this turn." }
+          ]
+        },
+        {
+          "id": "gb-dutch-line",
+          "csvName": "Dutch Line",
+          "displayName": "Dutch Line",
+          "role": "Line Infantry",
+          "contingent": "Netherlands",
+          "type": "infantry",
+          "formsSquare": true,
+          "tier": 1,
+          "tierSource": "guess",
+          "cost": 3,
+          "sprite": "britain/british_dutchline_left.svg",
+          "abilities": [
+            { "trigger": "shop", "keyword": "United Netherlands", "text": "Free if you bought Belgian Line earlier this turn." }
+          ]
+        },
+        {
+          "id": "gb-highlanders",
+          "unitId": "british_highlander",
+          "csvName": "Highlanders",
+          "displayName": "Highlanders",
+          "role": "Highland Infantry",
+          "contingent": "Scots",
+          "type": "infantry",
+          "formsSquare": true,
+          "tier": 1,
+          "tierSource": "prefab",
+          "cost": 3,
+          "sprite": "britain/british_highlander_left_2_0_.svg",
+          "abilities": [
+            { "trigger": "deploy", "keyword": "Bolster Morale", "text": "Your Anglo-Allied line infantry gain +1/+1, and these Highlanders gain +1/+1 more." }
+          ]
+        },
+        {
+          "id": "gb-highland-light",
+          "csvName": "Highlanders Light",
+          "displayName": "Highland Light Infantry",
+          "role": "Highland Light Infantry",
+          "contingent": "Scots",
+          "type": "infantry",
+          "formsSquare": true,
+          "tier": 1,
+          "tierSource": "guess",
+          "cost": 3,
+          "sprite": "britain/lighthighlandfoot_left_outlined.svg",
+          "abilities": [
+            { "trigger": "death", "keyword": "Regroup", "text": "The nearest other Scots unit gains +{R}/+{R}." }
+          ]
+        },
+        {
+          "id": "gb-scots-greys",
+          "unitId": "british_socttsgreysdragoons",
+          "csvName": "Scots Greys",
+          "displayName": "Scots Greys",
+          "role": "Heavy Dragoons",
+          "contingent": "Scots",
+          "type": "cavalry",
+          "tier": 1,
+          "tierSource": "prefab",
+          "cost": 3,
+          "sprite": "britain/british_scottsgreysdragoons_left_0_2_.svg",
+          "abilities": [
+            { "trigger": "deploy", "keyword": "Scout", "text": "Reveal the enemy army before you end your turn." },
+            { "trigger": "kill", "keyword": "Win Buff", "text": "Gain +1/+1." }
+          ]
+        },
+        {
+          "id": "gb-foot-guards",
+          "csvName": "Foot Guards, Center",
+          "displayName": "Foot Guards",
+          "role": "Guards Infantry",
+          "contingent": "British",
+          "type": "infantry",
+          "formsSquare": true,
+          "tier": 3,
+          "tierSource": "guess",
+          "cost": 3,
+          "sprite": "britain/british_footguardcenter_left_3_0_.svg",
+          "abilities": [
+            { "trigger": "deploy", "keyword": "Bolster Morale", "text": "All your units gain +1/+1." }
+          ],
+          "attachments": [
+            {
+              "csvName": "Foot Guards, Skirmishers",
+              "displayName": "Guards Light Company",
+              "kind": "skirmisher",
+              "unlockRank": 0,
+              "sprite": "britain/british_footguardskirmisher_left_2_0_.svg",
+              "trigger": "front",
+              "keyword": "Skirmish",
+              "text": "Step out ahead of the battalion. If the line is full, the battalion gets +1 attack instead."
+            },
+            {
+              "csvName": "Foot Guards, Grenadiers",
+              "displayName": "Guards Grenadiers",
+              "kind": "grenadier",
+              "unlockRank": 0,
+              "sprite": "britain/british_footguardgrenadier_left_3_2_.svg",
+              "trigger": "death",
+              "keyword": "Reserve",
+              "text": "Take the battalion's place when it falls."
+            }
+          ]
+        },
+        {
+          "id": "gb-light-dragoons",
+          "csvName": "Light Dragoons",
+          "displayName": "Light Dragoons",
+          "role": "Light Cavalry",
+          "contingent": "British",
+          "type": "cavalry",
+          "tier": 1,
+          "tierSource": "guess",
+          "cost": 3,
+          "sprite": null,
+          "abilities": [
+            { "trigger": "deploy", "keyword": "Scout", "text": "Reveal the enemy army before you end your turn." },
+            { "trigger": "kill", "keyword": "Win Buff", "text": "Gain +1/+1." }
+          ]
+        },
+        {
+          "id": "gb-horse-guards",
+          "csvName": "Horse Guards",
+          "displayName": "Household Cavalry",
+          "role": "Heavy Cavalry",
+          "contingent": "British",
+          "type": "cavalry",
+          "tier": 3,
+          "tierSource": "guess",
+          "cost": 3,
+          "sprite": null,
+          "abilities": [
+            { "trigger": "kill", "keyword": "Win Buff", "text": "Gain +2/+2." }
+          ]
+        },
+        {
+          "id": "gb-artillery",
+          "unitId": "british_artillery",
+          "csvName": "Artillery",
+          "displayName": "Royal Artillery",
+          "role": "Foot Battery",
+          "contingent": "British",
+          "type": "artillery",
+          "range": 3,
+          "tier": 1,
+          "tierSource": "prefab",
+          "cost": 3,
+          "art": ["britain/cannon_left_0_0_.svg", "britain/british_artillery_left_0_0_.svg"],
+          "abilities": [
+            { "trigger": "battle", "keyword": "Round Shot", "text": "From up to 3 places back, fire at the enemy's front unit." },
+            { "trigger": "front", "keyword": "Canister", "text": "At the front, fire grapeshot at close range." }
+          ]
+        },
+        {
+          "id": "gb-rockets",
+          "unitId": "british_rockets",
+          "csvName": "Rockets",
+          "displayName": "Rocket Troop",
+          "role": "Congreve Rockets",
+          "contingent": "British",
+          "type": "artillery",
+          "tier": 2,
+          "tierSource": "guess",
+          "cost": 3,
+          "art": ["britain/congreverockets_left_0_0_.svg", { "sprite": "britain/british_rockettrooper_left_0_2_.svg", "offset": [5.5, -1] }],
+          "abilities": [
+            { "trigger": "battle", "keyword": "Rocket Barrage", "text": "Hit every enemy in the first 3 places. Must stand at least 2 places back." }
+          ]
+        },
+        {
+          "id": "gb-rifles",
+          "unitId": "british_rifles",
+          "csvName": "Rifles",
+          "displayName": "95th Rifles",
+          "role": "Riflemen",
+          "contingent": "British",
+          "type": "infantry",
+          "formsSquare": false,
+          "tier": 3,
+          "tierSource": "prefab",
+          "cost": 3,
+          "sprite": "britain/british_rifleman_left_1_0_.svg",
+          "abilities": [
+            { "trigger": "battle", "keyword": "Rifle Tactics", "text": "Fires from 2nd place while another unit holds the front." }
+          ]
+        },
+        {
+          "id": "gb-light-foot",
+          "csvName": "Light Foot Regiment",
+          "displayName": "Light Infantry",
+          "role": "Light Infantry",
+          "contingent": "British",
+          "type": "infantry",
+          "formsSquare": false,
+          "tier": 1,
+          "tierSource": "prefab",
+          "cost": 3,
+          "sprite": "britain/british_light_left_2_0_.svg",
+          "abilities": [
+            { "trigger": "death", "keyword": "Regroup", "text": "The nearest other British unit gains +{R}/+{R}." }
+          ]
+        },
+        {
+          "id": "gb-belgian-dragoons",
+          "csvName": "Belgian Dragoons",
+          "displayName": "Belgian Dragoons",
+          "role": "Dragoons",
+          "contingent": "Netherlands",
+          "type": "cavalry",
+          "tier": 1,
+          "tierSource": "guess",
+          "cost": 3,
+          "sprite": null,
+          "abilities": []
+        },
+        {
+          "id": "gb-hanoverians",
+          "csvName": "Hannoverians",
+          "displayName": "Hanoverian Line",
+          "role": "Line Infantry",
+          "contingent": "Hanover",
+          "type": "infantry",
+          "formsSquare": true,
+          "tier": 1,
+          "tierSource": "guess",
+          "cost": 3,
+          "sprite": "britain/british_hannoverianfoot_left_2_0_.svg",
+          "abilities": [],
+          "attachments": [
+            {
+              "csvName": "Hannoverian Jagers",
+              "displayName": "Jäger",
+              "kind": "skirmisher",
+              "unlockRank": 1,
+              "sprite": null,
+              "trigger": "front",
+              "keyword": "Rifle Tactics",
+              "text": "Step out ahead of the battalion, then fire from 2nd place while it holds the front."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

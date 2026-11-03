@@ -1,0 +1,774 @@
+/* autoloo unit card. Size the whole card with --ucard-w; everything else scales in em. */
+
+.ucard {
+  --ucard-w: 320px;
+  --paper: #f5eedc;
+  --paper-2: #e8dbbb;
+  --paper-edge: #cdb98b;
+  --ink: #2a2017;
+  --ink-soft: #5d4d3b;
+  --ink-faint: #8c7a63;
+  --gold: #b38a2d;
+  --gold-hi: #e3c36b;
+  --atk: #39404d;
+  --atk-hi: #5a6475;
+  --hp: #9e1b1f;
+  --hp-hi: #c8383c;
+  --good: #2f6a3a;
+  --bad: #9b2b1f;
+  --nation: #1d3b8b;
+  --nation-deep: #142a63;
+  --nation-accent: #c8102e;
+
+  position: relative;
+  width: var(--ucard-w);
+  font-size: calc(var(--ucard-w) / 23);
+  font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  color: var(--ink);
+  line-height: 1.3;
+  text-align: left;
+  isolation: isolate;
+}
+
+.ucard[data-nation="britain"] {
+  --nation: #a3171c;
+  --nation-deep: #6f0f13;
+  --nation-accent: #1b2a4a;
+}
+
+.ucard *,
+.ucard *::before,
+.ucard *::after {
+  box-sizing: border-box;
+}
+
+.ucard .ico {
+  width: 1em;
+  height: 1em;
+  flex: none;
+  vertical-align: -0.14em;
+}
+
+/* Frame ------------------------------------------------------------------ */
+
+.ucard__frame {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55em;
+  padding: 0 0.85em 3.1em;
+  border-radius: 0.9em;
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(255, 255, 255, 0.55), transparent 60%),
+    radial-gradient(90% 60% at 100% 100%, rgba(140, 105, 50, 0.16), transparent 70%),
+    linear-gradient(var(--paper), var(--paper-2));
+  border: 0.16em solid var(--paper-edge);
+  box-shadow:
+    inset 0 0 0 0.22em var(--paper),
+    inset 0 0 0 0.3em color-mix(in srgb, var(--nation) 55%, var(--gold)),
+    0 0.15em 0.3em rgba(0, 0, 0, 0.25),
+    0 0.9em 1.8em -0.5em rgba(0, 0, 0, 0.45);
+  overflow: visible;
+}
+
+/* Header ----------------------------------------------------------------- */
+
+.ucard__head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.5em;
+  margin: 0 -0.85em;
+  padding: 0.7em 0.8em 0.6em;
+  border-radius: 0.75em 0.75em 0 0;
+  color: #fff;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.14), transparent 55%),
+    linear-gradient(90deg, var(--nation-deep), var(--nation) 55%, var(--nation-deep));
+  border-bottom: 0.18em solid var(--gold);
+  box-shadow: 0 0.12em 0 var(--nation-accent);
+}
+
+.ucard__title {
+  min-width: 0;
+  text-align: center;
+}
+
+.ucard__title h3 {
+  margin: 0;
+  font-family: "IM Fell English SC", "Iowan Old Style", Georgia, serif;
+  font-weight: 400;
+  font-size: 1.32em;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+  text-shadow: 0 0.08em 0 rgba(0, 0, 0, 0.35);
+}
+
+.ucard__title p {
+  margin: 0.2em 0 0;
+  font-size: 0.74em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.ucard__cost,
+.ucard__tier {
+  display: grid;
+  place-items: center;
+  width: 2.3em;
+  height: 2.3em;
+  border-radius: 50%;
+  position: relative;
+}
+
+.ucard__cost {
+  color: #6b4a08;
+}
+
+.ucard__cost .ico {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--gold-hi);
+  filter: drop-shadow(0 0.08em 0.06em rgba(0, 0, 0, 0.45));
+}
+
+.ucard__cost span {
+  position: relative;
+  font-weight: 800;
+  font-size: 1.15em;
+}
+
+.ucard__tier {
+  border: 0.12em solid rgba(255, 255, 255, 0.55);
+  background: rgba(0, 0, 0, 0.18);
+  line-height: 1;
+}
+
+.ucard__tier small {
+  font-size: 0.48em;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.8;
+  margin-top: 0.4em;
+}
+
+.ucard__tier span {
+  font-family: "IM Fell English SC", Georgia, serif;
+  font-size: 1em;
+  margin-top: -0.6em;
+}
+
+/* Art -------------------------------------------------------------------- */
+
+.ucard__art {
+  position: relative;
+  margin: 0;
+  height: 8.6em;
+  border-radius: 0.5em;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(180deg, transparent 62%, rgba(84, 66, 34, 0.22) 62.5%, rgba(84, 66, 34, 0.06)),
+    radial-gradient(70% 90% at 50% 40%, #fffaf0, #efe2c2 75%);
+  border: 0.08em solid var(--paper-edge);
+  box-shadow: inset 0 0.2em 0.6em rgba(80, 60, 30, 0.18);
+}
+
+/* Sprite stage: sized and laid out by sprite-art.js, standing on a shared
+   ground line (bottom must match ART.baseline in unit-card.js). */
+.ucard__stage {
+  position: absolute;
+  left: 50%;
+  bottom: 0.75em;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 0.25em 0.2em rgba(40, 28, 12, 0.3));
+}
+
+.ucard__stage img,
+.company__stage img {
+  position: absolute;
+  max-width: none;
+}
+
+.ucard__noart {
+  display: grid;
+  justify-items: center;
+  gap: 0.3em;
+  color: var(--ink-faint);
+  font-size: 0.78em;
+  font-style: italic;
+}
+
+.ucard__noart .ico {
+  width: 3.4em;
+  height: 3.4em;
+  opacity: 0.4;
+}
+
+.ucard__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25em;
+  margin-top: -0.2em;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.12em 0.5em;
+  border-radius: 99em;
+  font-size: 0.66em;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  background: rgba(255, 252, 244, 0.88);
+  border: 0.1em solid rgba(140, 122, 99, 0.45);
+}
+
+.badge--limit {
+  color: #fff;
+  background: var(--nation);
+  border-color: transparent;
+}
+
+.ucard__ribbon {
+  position: absolute;
+  top: 0.75em;
+  right: -2.3em;
+  width: 9em;
+  padding: 0.18em 0;
+  transform: rotate(35deg);
+  text-align: center;
+  font-size: 0.6em;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #fff;
+  background: #8a6d1a;
+  box-shadow: 0 0.1em 0.3em rgba(0, 0, 0, 0.3);
+}
+
+.ucard__ribbon[data-kind="dev"] {
+  background: #5d4d3b;
+}
+
+/* Rank track ------------------------------------------------------------- */
+
+.ucard__rank-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+}
+
+.ucard__rank-row > .kw {
+  font-size: 0.82em;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.ucard__rank-row b {
+  color: var(--ink);
+  font-size: 1.15em;
+}
+
+.dim {
+  color: var(--ink-faint);
+  font-weight: 600;
+}
+
+.pips {
+  display: flex;
+  flex: 1;
+  gap: 0.18em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pip {
+  position: relative;
+  flex: 1;
+  max-width: 1.7em;
+  height: 1.15em;
+  display: grid;
+  place-items: center;
+  color: color-mix(in srgb, var(--paper-edge) 75%, var(--ink-faint));
+  opacity: 0.55;
+  transition: color 0.18s ease, opacity 0.18s ease;
+}
+
+.pip .ico {
+  width: 100%;
+  height: 100%;
+}
+
+.pip.is-on {
+  opacity: 1;
+  color: var(--gold);
+  filter: drop-shadow(0 0.06em 0 rgba(90, 60, 10, 0.5));
+}
+
+.pip__unlock {
+  position: absolute;
+  top: -0.32em;
+  right: 0;
+  width: 0.62em;
+  height: 0.62em;
+  border-radius: 50%;
+  border: 0.1em solid var(--paper);
+  background: var(--nation);
+}
+
+.pip__unlock[data-kind="grenadier"] {
+  background: var(--nation-accent);
+}
+
+.ucard[data-nation="britain"] .pip__unlock[data-kind="skirmisher"] {
+  background: #2f6a3a;
+}
+
+.stepper {
+  display: flex;
+  gap: 0.2em;
+}
+
+.stepper button {
+  width: 1.55em;
+  height: 1.55em;
+  padding: 0;
+  border-radius: 0.35em;
+  border: 0.08em solid var(--paper-edge);
+  background: #fffaf0;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.stepper button:hover:not(:disabled) {
+  background: var(--nation);
+  color: #fff;
+  border-color: var(--nation);
+}
+
+.stepper button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.stepper button:focus-visible {
+  outline: 0.14em solid var(--nation);
+  outline-offset: 0.1em;
+}
+
+/* Abilities -------------------------------------------------------------- */
+
+.ucard__abilities {
+  display: grid;
+  gap: 0.4em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ability {
+  display: grid;
+  gap: 0.22em;
+  padding: 0.45em 0.55em;
+  border-radius: 0.45em;
+  background: rgba(255, 252, 244, 0.7);
+  border: 0.06em solid rgba(140, 122, 99, 0.3);
+}
+
+.ability p {
+  margin: 0;
+  font-size: 0.86em;
+}
+
+.ability--none {
+  color: var(--ink-faint);
+  font-style: italic;
+  font-size: 0.82em;
+  text-align: center;
+}
+
+.dyn {
+  display: inline-block;
+  min-width: 1em;
+  padding: 0 0.15em;
+  border-radius: 0.2em;
+  text-align: center;
+  color: var(--good);
+  background: rgba(47, 106, 58, 0.12);
+}
+
+.trig {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.1em 0.5em 0.1em 0.4em;
+  border-radius: 99em;
+  font-size: 0.68em;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--trig, #6b4f2a);
+  white-space: nowrap;
+}
+
+.trig--sm {
+  font-size: 0.78em;
+  vertical-align: 0.08em;
+}
+
+.trig[data-trigger="shop"] { --trig: #8a6d1a; }
+.trig[data-trigger="deploy"] { --trig: #2f6a3a; }
+.trig[data-trigger="firstClash"] { --trig: #6d3a91; }
+.trig[data-trigger="battle"] { --trig: #6b4f2a; }
+.trig[data-trigger="eachCycle"] { --trig: #2f4f8a; }
+.trig[data-trigger="front"] { --trig: #9a5a00; }
+.trig[data-trigger="kill"] { --trig: #9b1c1c; }
+.trig[data-trigger="death"] { --trig: #474038; }
+
+/* Attachment companies */
+
+.ability--company {
+  grid-template-columns: 3.1em 1fr;
+  gap: 0.5em;
+  align-items: start;
+}
+
+.company__art {
+  position: relative;
+  width: 3.1em;
+  height: 3.6em;
+  display: grid;
+  place-items: center;
+  border-radius: 0.35em;
+  background: radial-gradient(circle at 50% 40%, #fffaf0, #eadcb9);
+  border: 0.06em solid rgba(140, 122, 99, 0.35);
+  color: var(--ink-faint);
+}
+
+.company__stage {
+  position: relative;
+}
+
+.company__art > .ico {
+  width: 1.8em;
+  height: 1.8em;
+  opacity: 0.5;
+}
+
+.company__lock {
+  position: absolute;
+  right: -0.35em;
+  bottom: -0.35em;
+  display: grid;
+  place-items: center;
+  width: 1.35em;
+  height: 1.35em;
+  border-radius: 50%;
+  background: var(--ink-soft);
+  border: 0.1em solid var(--paper);
+  color: #fff;
+}
+
+.company__lock .ico {
+  width: 0.75em;
+  height: 0.75em;
+}
+
+.ability--company.is-locked .company__stage {
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+.ability--company.is-locked {
+  background: rgba(255, 252, 244, 0.4);
+  border-style: dashed;
+}
+
+.company__body {
+  display: grid;
+  gap: 0.2em;
+  min-width: 0;
+}
+
+.company__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4em;
+}
+
+.company__head strong {
+  font-size: 0.92em;
+}
+
+.mini-stats {
+  display: inline-flex;
+  gap: 0.25em;
+  font-size: 0.8em;
+  font-weight: 800;
+}
+
+.mini-stats > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2em;
+  padding: 0.05em 0.4em 0.05em 0.3em;
+  border-radius: 99em;
+  color: #fff;
+}
+
+.mini-stats__atk { background: var(--atk); }
+.mini-stats__hp { background: var(--hp); }
+
+.company__unlock {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  font-size: 0.72em;
+  font-weight: 600;
+  color: var(--ink-faint);
+}
+
+.ability--company.is-locked .company__head strong,
+.ability--company.is-locked p {
+  color: var(--ink-soft);
+}
+
+.ability--company.is-locked .mini-stats {
+  opacity: 0.55;
+}
+
+/* Tactics, traits and rations ------------------------------------------- */
+
+.ucard__tactics {
+  display: grid;
+  gap: 0.35em;
+}
+
+.ucard__tactics dl {
+  display: grid;
+  gap: 0.15em;
+  margin: 0;
+}
+
+.tac {
+  display: grid;
+  grid-template-columns: 5.4em 1fr;
+  align-items: baseline;
+  gap: 0.4em;
+  font-size: 0.8em;
+}
+
+.tac dt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  font-weight: 800;
+  font-size: 0.85em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tac dd {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.tac--good dt { color: var(--good); }
+.tac--bad dt { color: var(--bad); }
+
+.traits,
+.ucard__rations {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3em;
+}
+
+.trait,
+.ration {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.12em 0.55em;
+  border-radius: 0.3em;
+  font-size: 0.74em;
+  font-weight: 700;
+  color: var(--ink);
+  background: rgba(255, 252, 244, 0.85);
+  border: 0.08em solid var(--paper-edge);
+}
+
+.trait--neg {
+  color: var(--bad);
+  border-color: rgba(155, 43, 31, 0.4);
+  text-decoration: line-through;
+  text-decoration-thickness: 0.08em;
+}
+
+.ucard__rations-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  margin-right: 0.15em;
+  font-size: 0.68em;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.ration {
+  border-style: dashed;
+}
+
+/* Footer: stat medallions ----------------------------------------------- */
+
+.ucard__foot {
+  position: absolute;
+  left: -0.55em;
+  right: -0.55em;
+  bottom: -0.7em;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.stat {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3.5em;
+  height: 3.5em;
+  border-radius: 50%;
+  color: #fff;
+  pointer-events: auto;
+  border: 0.16em solid var(--gold-hi);
+  box-shadow:
+    inset 0 -0.3em 0.5em rgba(0, 0, 0, 0.3),
+    inset 0 0.25em 0.3em rgba(255, 255, 255, 0.25),
+    0 0.25em 0.5em rgba(0, 0, 0, 0.4);
+}
+
+.stat > .ico {
+  position: absolute;
+  width: 62%;
+  height: 62%;
+  opacity: 0.22;
+}
+
+.stat b {
+  position: relative;
+  font-size: 1.75em;
+  font-weight: 900;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0.06em 0.1em rgba(0, 0, 0, 0.5);
+}
+
+.stat sup {
+  position: absolute;
+  top: -0.2em;
+  right: -0.35em;
+  padding: 0.12em 0.4em;
+  border-radius: 99em;
+  font-size: 0.68em;
+  font-weight: 800;
+  color: #fff;
+  background: var(--good);
+  border: 0.1em solid var(--paper);
+}
+
+.stat--atk {
+  background: radial-gradient(circle at 35% 30%, var(--atk-hi), var(--atk) 70%);
+}
+
+.stat--hp {
+  background: radial-gradient(circle at 35% 30%, var(--hp-hi), var(--hp) 70%);
+}
+
+.ucard__sell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  margin-bottom: 1.05em;
+  padding: 0.18em 0.6em;
+  border-radius: 99em;
+  font-size: 0.72em;
+  font-weight: 700;
+  color: var(--ink-soft);
+  background: var(--paper);
+  border: 0.08em solid var(--paper-edge);
+  pointer-events: auto;
+}
+
+.ucard__sell .ico {
+  color: var(--gold);
+}
+
+/* Keyword tooltips ------------------------------------------------------- */
+
+.kw {
+  position: relative;
+  font-weight: 800;
+  color: var(--nation-deep);
+  cursor: help;
+  text-decoration: underline dotted 0.08em;
+  text-underline-offset: 0.18em;
+  outline: none;
+}
+
+.kw--plain {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Shared tooltip element, positioned by tooltip.js. Lives on <body>. */
+.ucard-tip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  max-width: min(260px, calc(100vw - 16px));
+  padding: 8px 11px;
+  border-radius: 6px;
+  font: 500 13px/1.4 "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  color: #fbf6ea;
+  background: #241b12;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+.ucard-tip[hidden] {
+  display: none;
+}
+
+.kw:focus-visible {
+  outline: 0.12em solid var(--nation);
+  outline-offset: 0.1em;
+  border-radius: 0.2em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pip {
+    transition: none;
+  }
+}

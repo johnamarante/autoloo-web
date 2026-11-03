@@ -1,0 +1,17 @@
+﻿Name,Attack,Health,Max Rank,Attached to,Comes with,Attachment Unlock Ranks,Attachment(s),Abilities,note,Max Allowed,Chance,ImplementationStatus
+Infanterie de ligne,3,2,3,standalone,,"1,2","Grenadiers, Voltiguers (ligne)","pop Grenadiers on death; pop Voltiguers on move to front, or +1 to attack if there is no room in the queue",,3,45,implemented
+Grenadiers,PARENT RANK,PARENT RANK,NA,Infanterie de ligne,,,,appear on death of parent unit,,NA,,implemented
+Voltiguers (ligne),PARENT RANK,1,NA,Infanterie de ligne,,,,appear on parent unit moving into the first queue position,,NA,,implemented
+Infanterie de legere/Chassuers,3,2,6,standalone,Voltiguers (legere),2,Carabiners a pied,"pop Grenadiers on death, pop Voltiguers on move to front, or +1 to attack if there is no room in the queue",,3,15,implemented
+Carabiners a pied,PARENT RANK,PARENT RANK,NA,Infanterie de legere,,,,"appear on death of parent unit, +1/1 to all infantry stats on attaching to infantry in deploy screen",,NA,,implemented
+Voltiguers (legere),PARENT RANK + 1,1,NA,Infanterie de legere,,,,"appear on parent unit moving into the first queue position, hit, and then vanish",,NA,,implemented
+Hussar,4,4,6,standalone,,,,"On deployment, will get information about the enemy before end turn is pressed, +1/1 on kill",,2,14,implemented
+Lancer,4,4,6,standalone,,,,"in battle mode+2 attack on first cycle, lancer still deal full attack to infantry in square",,1,,In Testing
+Cuirassier,6,6,6,standalone,,,,"WIN BUFF: in battle mode, + {RANK}+1/{RANK}+1 on kill",,2,14,implemented
+Carabiners a cheval,6,6,6,standalone,,,,"When deployed, all allied cavalry receives +1/1; in battle mode, + {RANK}+1/{RANK}+1 on kill",,1,,models selected
+Voltigeurs de la Garde Impériale,5,5,6,standalone,,,,"On death, if there is a unit behind it, then this unit will reappear with half HP and half Attack be",,1,,models selected
+Tirailleurs,5,5,6,standalone,,,,"On deploy, boost every other infantry unit HP by 1 and Attack by 1",,1,,In Testing
+Chasseurs-à-Pied de la Garde Impériale,8,8,9,standalone,,,,"In battle mode, Each cycle, +1 attack bonus to every allied infantry unit",Chasseurs-à-Pied de la Garde Impériale,1,,models selected
+Grenadiers-à-Pied de la Garde Impériale,6,8,9,standalone,,,,"In battle mode, Each cycle, +1 HP bonus to every other infantry unit",Grenadiers-à-Pied de la Garde Impériale,1,,In Testing
+Heavy Artillery,1,2,3,standalone,,,,"shoot canister at cloase range, shoot ball from long range (5)",,,12,implemented
+Howitzer,,,,,,,,,,,,planned

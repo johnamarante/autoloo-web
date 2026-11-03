@@ -1,0 +1,19 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Wooden Post (vertical) -->
+  <rect x="95" y="80" width="10" height="80" fill="#5D2906" />
+  <!-- Post Shadow (for depth) -->
+  <rect x="95" y="80" width="3" height="80" fill="#3D1D04" />
+
+  <!-- Wooden Sign -->
+  <rect x="10" y="30" width="180" height="80" rx="5" fill="#8B4513" stroke="#5D2906" stroke-width="4" />
+  <rect x="15" y="35" width="170" height="70" rx="3" fill="#A0522D" stroke="#5D2906" stroke-width="2" />
+
+  <!-- Nails (holding sign to post) -->
+  <circle cx="100" cy="50" r="3" fill="#5D2906" />
+  <circle cx="100" cy="90" r="3" fill="#5D2906" />
+
+  <!-- Text: "Recruit" -->
+  <text x="100" y="80" font-family="'Times New Roman', serif;" font-size="32" font-weight="bold" fill="#FFF" text-anchor="middle" style="text-shadow: 2px 2px 0 #5D2906;">
+    RECRUIT
+  </text>
+</svg>

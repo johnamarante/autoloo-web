@@ -1,0 +1,28 @@
+﻿Name,Attack,Health,Max Rank,Attached to,Comes with,Attachment Unlock Ranks,Attachment(s),Abilities,note,Max Allowed,Chance,ImplementationStatus
+"Foot, Center Company (Line Infantry)",2,3,3,standalone,Light Foot ,"0,3","Lights,Grenadiers","DEPLOYGRENADIERS: pop Foot Grenadiers on death SKIRMISH pop Light Foot on move to front, or +1 to attack if there is no room in the queue",British,,30,implemented
+"Foot, Grenadier company",PARENT RANK,PARENT RANK,3,"foot, center",,,,,British,,,implemented
+"Foot, Light company",PARENT RANK+1,1,3,"foot, center",,,,,British,,,implemented
+Brunswicker Line,2,3,3,standalone,,"2,3","Lieb Batallion, Advance Guard",,German,,,models selected
+Advance Guard,PARENT RANK + 1,1,,Brunswicker Line,,,,,German,,,models selected
+Lieb Batallion,PARENT RANK,PARENT RANK,,Brunswicker Line,,,,,German,,,models selected
+"Burnswick ""Death's Head"" Hussars",4,4,3,standalone,,,,"RECONNOITER: On Deployment, will get information about the enemy before end turn is pressed MOMENTUM+1/1 on kill to this",German,,,models selected
+Nassau Fusiliers,3,2,3,standalone,,"1,2","Granadiers, Voltiguers","DEPLOYGRENADIERS: pop Foot Grenadiers on death SKIRMISH pop Light Foot on move to front, or +1 to attack if there is no room in the queue",German,,30,implemented
+Nassau Voltiguers,PARENT RANK,1,,Nassau Fusiliers,,,,,German,,,implemented
+Nassau Grenadiers,PARENT RANK,PARENT RANK,,Nassau Fusiliers,,,,,German,,,implemented
+Belgian Line,2,3,3,standalone,,,,Free when bought after Dutch in the same turn,Holland,,,models selected
+Dutch Line,3,1,3,standalone,,,,Free when bought after Belgians in the same turn,Holland,,,models selected
+Highlanders,3,3,3,standalone,,,,"BOLSTER MORALE (Scots): On Deployment, +1/1 to all allied british and highlander infantry",Scots,,10,implemented
+Highlanders Light,3,3,3,standalone,,,,"REGROUP (Scots): If killed and there are other Scots in the lineup, will add +RANK/RANK to that nearest unit",Scots,,,still need sprites
+Scots Greys,5,5,6,standalone,,,,"WIN BUFF: +1/1 on kill to this SCOUT: On deployment, will get information about the enemy before end turn is pressed, +1/1 on kill",Scots,,10,implemented
+"Foot Guards, Center",5,5,9,standalone,,"0,0",,"BOLSTER MORALE (all): On Deployment, +1/1 to all units",,1,5,planned
+"Foot Guards, Grenadiers",PARENT RANK+2,PARENT RANK+2,,,,,,,,,,planned
+"Foot Guards, Skirmishers",PARENT RANK + 2,2,,,,,,,,,,planned
+Light Dragoons,4,4,3,standalone,,,,"On deployment, will get information about the enemy before end turn is pressed, +1/1 on kill",,,,planned
+Horse Guards,6,6,9,standalone,,,,"WIN BUFF: in battle mode, +2/2 on kill",,,5,planned
+Artillery,1,1,3,standalone,,,,"shoot canister at cloase range, shoot ball from long range (3)",,,10,implemented
+Rockets,1,1,3,standalone,,,,"fire rockets dealing damage to all enemies in the first three ranks, minimum range 2",,,,in testing
+Rifles,3,3,6,standalone,,,,"RIFLE TACTICS: fires from #2 queue space until no unit is in the #1 space, cannot form square",,1,10,in testing
+Light Foot Regiment,2,2,,standalone,,,,"REGROUP (British): If killed and there are other British in the lineup, will add +RANK/RANK to that nearest unit",British,,,models selected
+Belgian Dragoons,2,2,,standalone,,,,,Holland,,,still need sprites
+Hannoverians,2,3,3,standalone,,1,Hannoverian Jagers,,German,,,planned
+Hannoverian Jagers,PARENT RANK + 1,1,,Hannoverians,,,,"RIFLE TACTICS: fires from #2 queue space until no unit is in the #1 space, cannot form square",German,,,still need sprites

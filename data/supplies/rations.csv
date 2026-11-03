@@ -1,0 +1,14 @@
+﻿Name,Effect,Note
+Bread,"""+1/1""",
+Spirits,"""temp +3/3""",
+Hay,"""all cavalry +1/1""",
+Onion,"""+1/1 for unit grenadiers""",France only
+Bacon,"""+3/3 for all infantry units""",Britain Only
+Wine,"""+1/1 for unit skirmishers""",
+Cheese,"""HP + 2""",
+Vegetables,"""+2/2""",
+Telescope,"""show numbers with complete scout report every start of deployment when this is attached to cavalry with the scout ability, or +1/1 to artillery, or show enemy front position fully detailed when attached to a line cavalry or infantry unit",
+Colors,"""army and shop ranks up 1""",
+Drums,Purchase drums by placing on a deployed unit. Upon purchase of the drums the shop will be cleared and then populated with 3 of that unit. ,
+Claymore Sword,"""double an infantry or cavalry unit's attack power, also doubles HP for scots units,or simply +1/1 for artillery""",Britain only
+Eagle,"""double the stats of any unit this is attached to"" ",France Only

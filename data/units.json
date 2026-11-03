@@ -1,0 +1,143 @@
+{
+  "_about": "Gameplay data for the browser game, extracted from the Unity prefabs (Assets/Prefabs/*.prefab). Unit ids are the prefab names. 'kind' is the second part of Unity's unit name ({nation}_{kind}_{8 hex}); saves and matchmaking match units on it, so do not change it. Formulas use Unity's syntax: 'PARENT RANK + 1'. Abilities marked 'designed' come from the roster CSVs and have no Unity code yet.",
+  "rules": {
+    "startingCoin": 10,
+    "unitCost": 3,
+    "rollCost": 1,
+    "shopSlots": 3,
+    "lineSlots": 5,
+    "hearts": 3,
+    "winsToVictory": 10,
+    "squareAttackBonus": 3,
+    "canisterAttackBonus": 3,
+    "draftRoundCap": 3
+  },
+  "nations": {
+    "france": {
+      "prefix": "french",
+      "draftCode": "fr",
+      "rosterName": "France",
+      "enemy": "britain",
+      "roster": [
+        "french_line",
+        "french_chassuer",
+        "french_hussar",
+        "french_lancer",
+        "french_cuirassier",
+        "french_heavyartillery",
+        "french_youngguardtirailleurs",
+        "french_oldguardgrenadier"
+      ]
+    },
+    "britain": {
+      "prefix": "british",
+      "draftCode": "br",
+      "rosterName": "Britain",
+      "enemy": "france",
+      "roster": [
+        "british_foot",
+        "british_nassaurfusilier",
+        "british_highlander",
+        "british_socttsgreysdragoons",
+        "british_artillery",
+        "british_rockets",
+        "british_rifles"
+      ]
+    }
+  },
+  "units": {
+    "french_line": {
+      "kind": "line", "nation": "france", "type": "infantry", "formsSquare": true,
+      "attack": 3, "health": 2, "maxRank": 6, "tier": 1, "cost": 3, "chance": 45,
+      "skirmish": { "company": "french_linevoltiguer", "unlockRank": 1 },
+      "grenadiers": { "company": "french_linegrenadier", "unlockRank": 2 }
+    },
+    "french_chassuer": {
+      "kind": "chasseur", "nation": "france", "type": "infantry", "formsSquare": true,
+      "attack": 2, "health": 3, "maxRank": 6, "tier": 1, "cost": 3, "chance": 18,
+      "skirmish": { "company": "french_legerevoltiguer", "unlockRank": 0 },
+      "grenadiers": { "company": "french_carabinerapied", "unlockRank": 2 }
+    },
+    "french_hussar": {
+      "kind": "hussar", "nation": "france", "type": "cavalry",
+      "attack": 4, "health": 4, "maxRank": 6, "tier": 1, "cost": 3, "chance": 10,
+      "scout": true, "winBuff": "minor"
+    },
+    "french_lancer": {
+      "kind": "lancer", "nation": "france", "type": "cavalry",
+      "attack": 6, "health": 3, "maxRank": 9, "tier": 1, "cost": 3, "chance": 5,
+      "winBuff": "minor", "lancer": true
+    },
+    "french_cuirassier": {
+      "kind": "cuirassier", "nation": "france", "type": "cavalry",
+      "attack": 6, "health": 6, "maxRank": 9, "tier": 1, "cost": 3, "chance": 5,
+      "winBuff": "major"
+    },
+    "french_heavyartillery": {
+      "kind": "heavyartillery", "nation": "france", "type": "artillery",
+      "attack": 1, "health": 2, "maxRank": 3, "tier": 1, "cost": 3, "chance": 10,
+      "artillery": { "range": 5 }
+    },
+    "french_youngguardtirailleurs": {
+      "kind": "youngguard", "nation": "france", "type": "infantry", "formsSquare": true,
+      "attack": 6, "health": 8, "maxRank": 9, "tier": 3, "cost": 3, "chance": 10,
+      "deployBoostInfantry": { "attack": 1, "health": 1, "designed": true }
+    },
+    "french_oldguardgrenadier": {
+      "kind": "imperialguardgrenadier", "nation": "france", "type": "infantry", "formsSquare": true,
+      "attack": 6, "health": 8, "maxRank": 9, "tier": 3, "cost": 3, "chance": 10,
+      "cycleBoostInfantry": { "attack": 0, "health": 1, "designed": true }
+    },
+    "british_foot": {
+      "kind": "footcenter", "nation": "britain", "type": "infantry", "formsSquare": true,
+      "attack": 2, "health": 3, "maxRank": 6, "tier": 1, "cost": 3, "chance": 30,
+      "kindTags": ["AngloAlliedLineInfantry"],
+      "skirmish": { "company": "british_foot_light", "unlockRank": 0 },
+      "grenadiers": { "company": "british_foot_grenadier", "unlockRank": 3 }
+    },
+    "british_nassaurfusilier": {
+      "kind": "nassaurfusilier", "nation": "britain", "type": "infantry", "formsSquare": true,
+      "attack": 3, "health": 2, "maxRank": 9, "tier": 1, "cost": 3, "chance": 10,
+      "kindTags": ["AngloAlliedLineInfantry"],
+      "skirmish": { "company": "british_nassauskirmisher", "unlockRank": 1 },
+      "grenadiers": { "company": "british_nassaugrenadier", "unlockRank": 2 }
+    },
+    "british_highlander": {
+      "kind": "highlander", "nation": "britain", "type": "infantry", "formsSquare": true,
+      "attack": 3, "health": 3, "maxRank": 6, "tier": 1, "cost": 3, "chance": 30,
+      "kindTags": ["AngloAlliedLineInfantry"],
+      "bolsterMorale": true
+    },
+    "british_socttsgreysdragoons": {
+      "kind": "scottsgreysdragoons", "nation": "britain", "type": "cavalry",
+      "attack": 4, "health": 4, "maxRank": 6, "tier": 1, "cost": 3, "chance": 10,
+      "kindTags": ["scots"],
+      "scout": true, "winBuff": "minor"
+    },
+    "british_artillery": {
+      "kind": "artillery", "nation": "britain", "type": "artillery",
+      "attack": 1, "health": 1, "maxRank": 3, "tier": 1, "cost": 3, "chance": 10,
+      "artillery": { "range": 3 }
+    },
+    "british_rockets": {
+      "kind": "rockettrooper", "nation": "britain", "type": "artillery",
+      "attack": 1, "health": 3, "maxRank": 3, "tier": 2, "cost": 3, "chance": 10,
+      "rockets": { "targets": 3, "minPosition": 2, "designed": true }
+    },
+    "british_rifles": {
+      "kind": "rifleman", "nation": "britain", "type": "infantry", "formsSquare": false,
+      "attack": 5, "health": 5, "maxRank": 9, "tier": 3, "cost": 3, "chance": 10,
+      "rifleTactics": { "position": 2, "designed": true }
+    }
+  },
+  "companies": {
+    "french_linevoltiguer": { "kind": "linevoltiguer", "attackFormula": "1", "healthFormula": "1" },
+    "french_linegrenadier": { "kind": "linegrenadier", "attackFormula": "PARENT RANK+1", "healthFormula": "PARENT RANK+1", "formsSquare": true },
+    "french_legerevoltiguer": { "kind": "legerevoltiguer", "attackFormula": "PARENT RANK + 1", "healthFormula": "1" },
+    "french_carabinerapied": { "kind": "carabinerapied", "attackFormula": "PARENT RANK", "healthFormula": "PARENT RANK", "formsSquare": true },
+    "british_foot_light": { "kind": "footskirmisher", "attackFormula": "PARENT RANK+1", "healthFormula": "1" },
+    "british_foot_grenadier": { "kind": "footgrenadier", "attackFormula": "PARENT RANK+1", "healthFormula": "PARENT RANK+1", "formsSquare": true },
+    "british_nassauskirmisher": { "kind": "nassauvoltiguer", "attackFormula": "1", "healthFormula": "1" },
+    "british_nassaugrenadier": { "kind": "nassaugrenadier", "attackFormula": "1", "healthFormula": "1", "formsSquare": true }
+  }
+}

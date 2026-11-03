@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Autoloo Unit Cards</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=Source+Sans+3:wght@400;500;600;700;800;900&display=swap">
+    <link rel="stylesheet" href="src/cards/unit-card.css">
+    <link rel="stylesheet" href="src/pages/unit-cards.css">
+  </head>
+  <body>
+    <header class="page-head">
+      <div class="page-head__inner">
+        <div>
+          <p class="eyebrow"><a href="./">Autoloo</a> · Waterloo, 1815</p>
+          <h1>Unit Cards</h1>
+          <p class="lede">Every unit in both armies. Hover or tab to any underlined keyword for its rules, and use the rank buttons to see how a unit grows as you merge copies.</p>
+        </div>
+      </div>
+      <nav class="controls" aria-label="Card filters">
+        <div class="seg" role="tablist" aria-label="Army">
+          <button type="button" role="tab" data-nation="all" aria-selected="true">Both armies</button>
+          <button type="button" role="tab" data-nation="france" aria-selected="false">France</button>
+          <button type="button" role="tab" data-nation="britain" aria-selected="false">Britain &amp; Allies</button>
+        </div>
+        <div class="seg" role="group" aria-label="Which units">
+          <button type="button" data-scope="roster" aria-pressed="true">On the roster</button>
+          <button type="button" data-scope="all" aria-pressed="false">Include in development</button>
+        </div>
+        <label class="rank-all">
+          <span>Preview all at rank</span>
+          <input type="range" min="0" max="9" value="0" step="1" id="rank-all">
+          <output for="rank-all" id="rank-all-out">0</output>
+        </label>
+      </nav>
+    </header>
+
+    <main id="armies" aria-live="polite">
+      <p class="status">Loading rosters…</p>
+    </main>
+
+    <script type="module" src="src/pages/unit-cards.js"></script>
+  </body>
+</html>
