@@ -1,5 +1,5 @@
 // A unit on the board: its sprite at battlefield scale, with attack and
-// health badges, a rank chevron, and (in the shop) its cost and frozen state.
+// health badges, a rank chevron, and (in the shop) its cost and whether it is held in reserve.
 import { layoutSprites, spriteStageHtml } from "../../cards/sprite-art.js";
 import { unitLook } from "./data.js";
 
@@ -13,7 +13,7 @@ export function tokenHtml(data, unit, { where, index, selected = false, frozen =
     ? spriteStageHtml(layoutSprites(look.artLayers, TOKEN), "token__stage")
     : `<div class="token__noart">${escapeHtml(look.name)}</div>`;
   const label = `${look.name}, ${unit.attack} attack, ${unit.health} health, rank ${unit.rank}${
-    where === "shop" ? `, costs ${unit.cost}${frozen ? ", frozen" : ""}` : ""
+    where === "shop" ? `, costs ${unit.cost}${frozen ? ", in reserve" : ""}` : ""
   }`;
   return `
     <button type="button" class="token${selected ? " is-selected" : ""}${frozen ? " is-frozen" : ""}" data-facing="${facing}"

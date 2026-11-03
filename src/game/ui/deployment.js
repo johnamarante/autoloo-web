@@ -13,6 +13,14 @@ import { sfx } from "./sound.js";
 
 const UI = new URL("../../../assets/ui/", import.meta.url).href;
 const DRAG_THRESHOLD = 6;
+// Small line icons for the buttons; they take the button's text colour.
+const svg = (body) => `<svg class="gbtn__icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
+const ICON = {
+  back: svg('<path d="M14 6l-6 6 6 6"/>'),
+  dice: svg('<rect x="4" y="4" width="16" height="16" rx="3.5"/><circle cx="9" cy="9" r="1.2" fill="currentColor"/><circle cx="15" cy="15" r="1.2" fill="currentColor"/><circle cx="15" cy="9" r="1.2" fill="currentColor"/><circle cx="9" cy="15" r="1.2" fill="currentColor"/>'),
+  reserve: svg('<path d="M5 4h14v16l-7-4-7 4z"/>'),
+  advance: svg('<path d="M5 6l6 6-6 6"/><path d="M12 6l6 6-6 6"/>'),
+};
 
 /**
  * @param root  element to render into
@@ -38,7 +46,7 @@ export function mountDeployment(root, ctx) {
     root.innerHTML = `
       <div class="screen deploy" data-nation="${run.nation}">
         <header class="hud">
-          <button type="button" class="img-btn hud__quit" data-act="quit" aria-label="Save and quit to menu"><img src="${UI}buttons/quit.png" alt=""></button>
+          <button type="button" class="gbtn gbtn--quit hud__quit" data-act="quit" aria-label="Save and quit to menu">${ICON.back}<span>Quit</span></button>
           <div class="hud__stats">
             <span class="hud__stat" title="Coin"><img src="${UI}coin.svg" alt="Coin"><b>${run.coin}</b></span>
             <span class="hud__stat" title="Hearts left"><img src="${UI}heart.svg" alt="Hearts"><b>${heartsLeft(catalog, run)}</b></span>
@@ -70,20 +78,31 @@ export function mountDeployment(root, ctx) {
         <aside class="card-place" aria-live="polite"></aside>
 
         <footer class="actions">
-          <button type="button" class="img-btn" data-act="roll" ${run.coin < catalog.rules.rollCost ? "disabled" : ""} aria-label="Roll the shop for ${catalog.rules.rollCost} coin"><img src="${UI}buttons/roll.png" alt=""></button>
+          <button type="button" class="gbtn gbtn--roll" data-act="roll" ${run.coin < catalog.rules.rollCost ? "disabled" : ""} aria-label="Roll the shop for ${catalog.rules.rollCost} coin">${ICON.dice}<span>Roll</span>${costHtml(catalog.rules.rollCost)}</button>
           ${
             selected?.where === "shop"
-              ? `<button type="button" class="img-btn" data-act="freeze" aria-label="${run.shop[selected.index]?.frozen ? "Unfreeze" : "Freeze"} this recruit"><img src="${UI}buttons/freeze.png" alt=""></button>`
+              ? reserveButtonHtml(Boolean(run.shop[selected.index]?.frozen))
               : selected?.where === "line"
-                ? `<button type="button" class="img-btn img-btn--sell" data-act="sell" aria-label="Sell for ${1 + Math.floor(sel.rank / 3)} coin"><img src="${UI}buttons/sell.png" alt=""><span class="sell-value">+${1 + Math.floor(sel.rank / 3)}</span></button>`
+                ? `<button type="button" class="gbtn gbtn--sell" data-act="sell" aria-label="Sell for ${1 + Math.floor(sel.rank / 3)} coin"><span>Sell</span>${costHtml(`+${1 + Math.floor(sel.rank / 3)}`)}</button>`
                 : `<span class="actions__hint">${hintText()}</span>`
           }
-          <button type="button" class="img-btn actions__battle" data-act="battle" aria-label="End turn and go to battle"><img src="${UI}buttons/end_turn.png" alt=""></button>
+          <button type="button" class="gbtn gbtn--battle actions__battle" data-act="battle" aria-label="End turn and go to battle"><span>To Battle</span>${ICON.advance}</button>
         </footer>
         <div class="fx-layer" aria-hidden="true"></div>
         <p class="toast" role="status"></p>
       </div>`;
     showCard();
+  }
+
+  function costHtml(amount) {
+    return `<span class="gbtn__cost"><img src="${UI}coin.svg" alt="">${amount}</span>`;
+  }
+
+  // A held recruit stays in the shop through the next roll and the next turn (Unity's freeze).
+  function reserveButtonHtml(reserved) {
+    return reserved
+      ? `<button type="button" class="gbtn gbtn--reserve" data-act="freeze" aria-pressed="true" aria-label="Release this recruit from reserve">${ICON.reserve}<span>Release</span></button>`
+      : `<button type="button" class="gbtn gbtn--reserve" data-act="freeze" aria-pressed="false" aria-label="Hold this recruit in reserve">${ICON.reserve}<span>Reserve</span></button>`;
   }
 
   function hintText() {

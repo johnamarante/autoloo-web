@@ -27,6 +27,13 @@ body {
   height: 100%;
 }
 
+/* The board scales itself, so phone browsers must not enlarge its text
+   (Android Chrome's text autosizing swelled everything sized in em). */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   background: #2a2017;
   color: var(--ink);
@@ -91,37 +98,99 @@ h2 {
 
 /* Buttons --------------------------------------------------------------- */
 
-.img-btn {
-  padding: 0;
-  border: 0;
-  background: none;
+/* Game buttons: chunky ink-outlined plates in the board's slab lettering. */
+.gbtn {
+  --plate: #3d4a8f;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35em;
+  height: 2.5em;
+  padding: 0 0.8em;
+  border: 0.1em solid var(--ink);
+  border-radius: 0.45em;
+  font: 2.1em/1 "Alfa Slab One", Georgia, serif;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  color: #fff;
+  background: linear-gradient(rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 55%), var(--plate);
+  box-shadow: 0 0.14em 0 var(--ink), inset 0 -0.12em 0 rgba(0, 0, 0, 0.22);
+  text-shadow: 0 0.06em 0 rgba(0, 0, 0, 0.35);
   cursor: pointer;
-  line-height: 0;
-  border-radius: 0.8em;
   transition: transform 0.12s ease, filter 0.12s ease;
 }
 
-.img-btn img {
-  width: 100%;
-  height: auto;
-  pointer-events: none;
+.gbtn:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-0.05em);
 }
 
-.img-btn:hover:not(:disabled) {
-  transform: translateY(-0.2em);
-  filter: brightness(1.08);
-}
-
-.img-btn:active:not(:disabled) {
+.gbtn:active:not(:disabled) {
   transform: translateY(0.1em);
+  box-shadow: 0 0.04em 0 var(--ink), inset 0 -0.12em 0 rgba(0, 0, 0, 0.22);
 }
 
-.img-btn:disabled {
+.gbtn:disabled {
   filter: grayscale(1) opacity(0.5);
   cursor: default;
 }
 
-.img-btn:focus-visible,
+.gbtn__icon {
+  width: 1em;
+  height: 1em;
+  flex: none;
+}
+
+/* The price, on a parchment chip: "1" to roll, "+1" when selling. */
+.gbtn__cost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15em;
+  margin-left: 0.15em;
+  padding: 0.12em 0.4em 0.12em 0.15em;
+  border-radius: 99em;
+  font-size: 0.85em;
+  color: var(--ink);
+  text-shadow: none;
+  background: var(--field);
+}
+
+.gbtn__cost img {
+  width: 1.1em;
+  height: 1.1em;
+}
+
+.gbtn--quit {
+  --plate: #6b5844;
+  height: 2.2em;
+  padding: 0 0.7em 0 0.45em;
+  font-size: 1.6em;
+}
+
+.gbtn--roll {
+  --plate: #3d4a8f;
+}
+
+.gbtn--reserve {
+  --plate: #8a6a1f;
+}
+
+.gbtn--reserve[aria-pressed="true"] {
+  --plate: #5d4d3b;
+}
+
+.gbtn--sell {
+  --plate: var(--good);
+}
+
+.gbtn--battle {
+  --plate: #a3171c;
+  height: 2.4em;
+  padding: 0 0.7em 0 0.9em;
+  font-size: 2.7em;
+}
+
+.gbtn:focus-visible,
 .btn:focus-visible,
 .token:focus-visible,
 .slot__empty:focus-visible,
@@ -162,10 +231,6 @@ h2 {
   align-items: center;
   gap: 2em;
   padding: 0.8em 2em;
-}
-
-.hud__quit {
-  width: 7em;
 }
 
 .hud__stats {
@@ -453,15 +518,17 @@ h2 {
   width: 1.3em;
 }
 
+/* A recruit held in reserve: kept through the next roll and the next turn. */
 .token.is-frozen {
-  background: linear-gradient(rgba(190, 225, 250, 0.75), rgba(150, 200, 240, 0.55));
-  box-shadow: inset 0 0 0 0.25em var(--frost);
+  background: linear-gradient(rgba(235, 215, 150, 0.7), rgba(215, 185, 105, 0.5));
+  box-shadow: inset 0 0 0 0.25em #b38a2d;
 }
 
 .token.is-frozen::after {
-  content: "Frozen";
+  content: "In Reserve";
+  white-space: nowrap;
   position: absolute;
-  top: 0.4em;
+  bottom: -1.1em;
   left: 50%;
   transform: translateX(-50%);
   padding: 0.1em 0.6em;
@@ -471,7 +538,7 @@ h2 {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #fff;
-  background: #3b7fb8;
+  background: #8a6a1f;
 }
 
 /* Scout report ----------------------------------------------------------- */
@@ -565,17 +632,12 @@ h2 {
   right: 2em;
   bottom: 1.2em;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 1.5em;
-}
-
-.actions .img-btn {
-  width: 13em;
 }
 
 .actions__battle {
   margin-left: auto;
-  width: 15em !important;
 }
 
 .actions__hint {
@@ -584,22 +646,6 @@ h2 {
   font-size: 1.5em;
   font-weight: 600;
   color: var(--ink-soft);
-}
-
-.img-btn--sell {
-  position: relative;
-}
-
-.sell-value {
-  position: absolute;
-  top: -0.6em;
-  right: -0.5em;
-  padding: 0.1em 0.5em;
-  border-radius: 99em;
-  font: 1.6em "Alfa Slab One", Georgia, serif;
-  line-height: 1.2;
-  color: #fff;
-  background: var(--good);
 }
 
 /* Feedback --------------------------------------------------------------- */
