@@ -598,20 +598,23 @@ h2 {
 
 /* Card place ------------------------------------------------------------- */
 
+/* The card area is a size container, so the card can be as large as fits
+   both its width and its height (cards run up to about 1.9 times as tall as
+   wide). Container units also keep the card's own em scaling from compounding. */
 .card-place {
   position: absolute;
-  top: 7em;
+  top: 6.5em;
   right: 2em;
-  width: 24em;
-  bottom: 11em;
+  width: 27em;
+  bottom: 1.2em;
   display: flex;
   justify-content: center;
   align-items: flex-start;
+  container-type: size;
 }
 
-/* Container units, so the card's own em scaling does not compound. */
 .card-place .ucard {
-  --ucard-w: 19cqw;
+  --ucard-w: min(100cqw, 53cqh);
 }
 
 .card-place__hint {
@@ -626,10 +629,11 @@ h2 {
 
 /* Actions ---------------------------------------------------------------- */
 
+/* Stops short of the card column on the right. */
 .actions {
   position: absolute;
   left: 2em;
-  right: 2em;
+  right: 30em;
   bottom: 1.2em;
   display: flex;
   align-items: center;
@@ -845,19 +849,19 @@ h2 {
 .side__flag {
   display: grid;
   justify-items: center;
-  gap: 0.5em;
-  padding: 1em 2em;
+  gap: 0.35em;
+  padding: 0.6em 1.4em;
   border: 0.25em solid var(--ink);
   border-radius: 1em;
   background: #fff;
   box-shadow: 0 0.3em 0 var(--ink);
-  font: 2em "Alfa Slab One", Georgia, serif;
+  font: 1.6em "Alfa Slab One", Georgia, serif;
   color: var(--ink);
   cursor: pointer;
 }
 
 .side__flag img {
-  width: 6em;
+  width: 4.5em;
 }
 
 .side__flag:hover {
@@ -876,8 +880,9 @@ h2 {
 }
 
 .card-place--menu {
-  top: 4em;
+  top: 3em;
   bottom: 2em;
+  width: 27em;
 }
 
 /* Report ----------------------------------------------------------------- */

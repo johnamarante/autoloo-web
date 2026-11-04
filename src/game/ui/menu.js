@@ -32,7 +32,7 @@ export function mountMenu(root, ctx) {
     <div class="screen menu">
       <header class="menu__head">
         <h1>Autoloo</h1>
-        <p>Waterloo, 1815. Recruit, merge and line up your army, then watch it fight.</p>
+        <p>Waterloo, 1815. Recruit, merge and line up your army, then let the battle begin!</p>
         ${ctx.status ? statusHtml(ctx.status) : ""}
       </header>
       ${
@@ -67,12 +67,18 @@ export function mountMenu(root, ctx) {
   const place = root.querySelector(".card-place");
   const showCard = (token) => {
     place.replaceChildren();
-    if (!token) return;
-    const [nation, i] = token.dataset.index.split(":");
-    const look = unitLook(data, preview[nation][Number(i)]);
-    if (look.card) place.append(createUnitCard(look.card, { roster: look.roster, rations: data.rations }));
+    const [nation, i] = token?.dataset.index.split(":") ?? [];
+    const look = token && unitLook(data, preview[nation][Number(i)]);
+    if (look?.card) {
+      place.append(createUnitCard(look.card, { roster: look.roster, rations: data.rations }));
+      return;
+    }
+    // The same placeholder as on the deployment screen.
+    const verb = matchMedia("(hover: none)").matches ? "Tap" : "Hover over";
+    place.innerHTML = `<p class="card-place__hint">${verb} a unit to see its card.</p>`;
   };
 
+  showCard(null);
   root.onpointerover = (e) => showCard(e.target.closest(".token"));
   root.onfocusin = (e) => showCard(e.target.closest(".token"));
   root.onclick = (e) => {
