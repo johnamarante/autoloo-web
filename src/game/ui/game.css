@@ -879,6 +879,15 @@ h2 {
   font-size: 0.66em;
 }
 
+.menu__version {
+  position: absolute;
+  left: 3em;
+  bottom: 1.2em;
+  margin: 0;
+  font-size: 1.2em;
+  color: var(--ink-soft);
+}
+
 .card-place--menu {
   top: 3em;
   bottom: 2em;

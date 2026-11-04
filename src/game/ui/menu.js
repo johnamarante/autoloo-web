@@ -6,6 +6,7 @@ import { tokenHtml, escapeHtml } from "./token.js";
 import { unitLook } from "./data.js";
 import { NAME_MAX } from "../net/player.js";
 import { handleSoundToggle, soundTogglesHtml } from "./sound-toggles.js";
+import { VERSION } from "../version.js";
 
 const UI = new URL("../../../assets/ui/", import.meta.url).href;
 
@@ -61,6 +62,7 @@ export function mountMenu(root, ctx) {
           .join("")}
       </div>
       <aside class="card-place card-place--menu" aria-live="polite"></aside>
+      <p class="menu__version">Version ${VERSION}</p>
       ${ctx.status?.player.needsName ? nameSetupHtml(ctx.status.player.name) : ""}
     </div>`;
 
