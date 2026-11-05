@@ -1,6 +1,7 @@
 // Where saves and drafts go, and who is playing.
 //
-//   live     the Cloudflare Worker that Unity players use (the default on GitHub Pages)
+//   live     the Cloudflare Worker that Unity players use (the default on GitHub
+//            Pages and in the Android app)
 //   dev      the stand-in Worker in serve.mjs (the default on localhost): it keeps
 //            its own copies and only reads from the live Worker, never writes
 //   offline  this browser's localStorage
@@ -12,9 +13,13 @@ import { createLocalStore, createWorkerStore } from "./store.js";
 
 export const LIVE_WORKER = "https://autoloo.john-amarante8888.workers.dev";
 
+/** True inside the Android app (mobile/), where the game is served from https://localhost. */
+export const isNativeApp = () => Boolean(globalThis.Capacitor?.isNativePlatform?.());
+
 export function storageMode(location = window.location) {
   const asked = new URLSearchParams(location.search).get("store");
   if (["live", "dev", "offline"].includes(asked)) return asked;
+  if (isNativeApp()) return "live";
   return ["localhost", "127.0.0.1", "[::1]"].includes(location.hostname) ? "dev" : "live";
 }
 

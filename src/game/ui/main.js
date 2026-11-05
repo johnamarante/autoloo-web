@@ -5,8 +5,8 @@ import { createRng } from "../engine/rng.js";
 import { applyBattleResult, createRun } from "../engine/run.js";
 import { simulateBattle } from "../engine/battle.js";
 import { createStore, storageMode } from "../net/config.js";
-import { authConfigured, currentSession, handleLoginRedirect, login, logout } from "../net/auth.js";
-import { claimName, resolvePlayer } from "../net/player.js";
+import { authConfigured, currentSession, loginWithPassword, logout, resetPassword, signUp } from "../net/auth.js";
+import { claimName, GUEST, resolvePlayer } from "../net/player.js";
 import { findOpponent, postDraft, savePlayerRecord } from "../net/drafts.js";
 import { loadGameData } from "./data.js";
 import { clearSave, loadSave, saveRun } from "./save.js";
@@ -22,7 +22,6 @@ const rng = createRng();
 const mode = storageMode();
 const store = createStore(mode);
 let player;
-let loginMessage = "";
 let data;
 let screen;
 let run;
@@ -42,9 +41,19 @@ function menu() {
   show(mountMenu, {
     data,
     save: save?.playername === player.name ? save : null,
-    status: { mode, player, canLogin: authConfigured(), message: loginMessage },
-    onLogin: (signup) => login({ signup }),
-    onLogout: logout,
+    status: { mode, player, canLogin: authConfigured() },
+    // The menu's own login form; a refusal throws with Auth0's message for the form to show.
+    async onLogin({ email, password, signup }) {
+      const session = signup ? await signUp(email, password) : await loginWithPassword(email, password);
+      player = await resolvePlayer(store, mode, session);
+      menu();
+    },
+    onResetPassword: resetPassword,
+    onLogout() {
+      logout();
+      player = GUEST;
+      menu();
+    },
     async onSetName(name) {
       player = await claimName(store, player, name);
       menu();
@@ -104,10 +113,8 @@ function ending() {
 }
 
 try {
-  const [loaded, redirect] = await Promise.all([loadGameData(), authConfigured() ? handleLoginRedirect() : null]);
-  data = loaded;
-  loginMessage = redirect?.error ?? "";
-  player = await resolvePlayer(store, mode, redirect?.session ?? currentSession());
+  data = await loadGameData();
+  player = await resolvePlayer(store, mode, currentSession());
   menu();
 } catch (err) {
   console.error(err);

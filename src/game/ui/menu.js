@@ -17,8 +17,10 @@ const STORE_LABELS = {
 };
 
 /**
- * ctx: { data, save, status: { mode, player, canLogin, message }, onNewGame(nation), onResume(),
- *        onLogin(signup), onLogout(), onSetName(name) -> Promise }
+ * ctx: { data, save, status: { mode, player, canLogin }, onNewGame(nation), onResume(),
+ *        onLogin({ email, password, signup }) -> Promise, onResetPassword(email) -> Promise<message>,
+ *        onLogout(), onSetName(name) -> Promise }
+ * Login happens in the menu's own form; a rejected promise carries Auth0's message, shown in the form.
  * player is { name, guest, needsName?, test? }; needsName asks for a name, as MainMenu does on a first login.
  */
 export function mountMenu(root, ctx) {
@@ -88,10 +90,57 @@ export function mountMenu(root, ctx) {
     const btn = e.target.closest("[data-act]");
     if (btn?.dataset.act === "new") ctx.onNewGame(btn.dataset.nation);
     if (btn?.dataset.act === "resume") ctx.onResume();
-    if (btn?.dataset.act === "login") ctx.onLogin(false);
-    if (btn?.dataset.act === "signup") ctx.onLogin(true);
+    if (btn?.dataset.act === "login") openLogin(false);
+    if (btn?.dataset.act === "signup") openLogin(true);
     if (btn?.dataset.act === "logout") ctx.onLogout();
   };
+
+  function openLogin(signup) {
+    root.querySelector(".login")?.remove();
+    root.querySelector(".screen").insertAdjacentHTML("beforeend", loginFormHtml(signup));
+    const dialog = root.querySelector(".login");
+    const form = dialog.querySelector("form");
+    const error = dialog.querySelector(".login__error");
+    const note = dialog.querySelector(".login__note");
+    const busy = (on) => form.querySelectorAll("button, input").forEach((el) => (el.disabled = on));
+    const close = () => dialog.remove();
+    form.elements.email.focus();
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      error.textContent = note.textContent = "";
+      busy(true);
+      try {
+        await ctx.onLogin({ email: form.elements.email.value, password: form.elements.password.value, signup });
+      } catch (err) {
+        error.textContent = err.message;
+        busy(false);
+        form.elements.password.select();
+      }
+    };
+    dialog.onclick = async (e) => {
+      const act = e.target.closest("[data-login]")?.dataset.login;
+      if (act === "cancel") close();
+      if (act === "switch") openLogin(!signup);
+      if (act === "reset") {
+        error.textContent = note.textContent = "";
+        if (!form.elements.email.value.trim()) {
+          error.textContent = "Enter your email address first.";
+          form.elements.email.focus();
+          return;
+        }
+        busy(true);
+        try {
+          note.textContent = await ctx.onResetPassword(form.elements.email.value);
+        } catch (err) {
+          error.textContent = err.message;
+        }
+        busy(false);
+      }
+    };
+    dialog.onkeydown = (e) => {
+      if (e.key === "Escape") close();
+    };
+  }
 
   const form = root.querySelector(".name-setup form");
   if (form) {
@@ -127,6 +176,28 @@ function statusHtml({ mode, player, canLogin, message }) {
   return `
     <p class="menu__status">Playing as <b>${escapeHtml(player.name)}</b> · ${STORE_LABELS[mode]} ${account} ${soundTogglesHtml("sound-toggles--small")}</p>
     ${message ? `<p class="menu__message" role="alert">${escapeHtml(message)}</p>` : ""}`;
+}
+
+function loginFormHtml(signup) {
+  return `
+    <div class="name-setup login" role="dialog" aria-modal="true" aria-labelledby="login-title">
+      <form>
+        <h2 id="login-title">${signup ? "Sign up" : "Log in"}</h2>
+        <p>${signup ? "Create an account to put your armies in the field." : "Use the same account as the Autoloo app."}</p>
+        <input name="email" type="email" required autocomplete="username" placeholder="Email" aria-label="Email">
+        <input name="password" type="password" required autocomplete="${signup ? "new-password" : "current-password"}" placeholder="Password" aria-label="Password">
+        <p class="name-setup__error login__error" role="alert"></p>
+        <p class="login__note" role="status"></p>
+        <div class="login__actions">
+          <button type="button" class="btn btn--small" data-login="cancel">Cancel</button>
+          <button type="submit" class="btn btn--primary">${signup ? "Create account" : "Log in"}</button>
+        </div>
+        <p class="login__links">
+          <button type="button" class="login__link" data-login="switch">${signup ? "Already have an account? Log in" : "New here? Sign up"}</button>
+          ${signup ? "" : '<button type="button" class="login__link" data-login="reset">Forgot password?</button>'}
+        </p>
+      </form>
+    </div>`;
 }
 
 function nameSetupHtml(suggested) {

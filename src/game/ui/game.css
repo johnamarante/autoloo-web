@@ -805,6 +805,44 @@ h2 {
   color: var(--hp);
 }
 
+/* The login and sign-up form (the same dialog as the name setup). */
+.login input + input {
+  margin-top: 0.4em;
+}
+
+.login .login__note {
+  margin: 0 0 0.6em;
+  color: var(--good);
+}
+
+.login__actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+
+.login__actions .btn--small {
+  font-size: 1.4em;
+}
+
+.login .login__links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5em;
+  margin: 1em 0 0;
+}
+
+.login__link {
+  padding: 0;
+  border: 0;
+  font: 600 1em "Source Sans 3", sans-serif;
+  color: #3d4a8f;
+  text-decoration: underline;
+  background: none;
+  cursor: pointer;
+}
+
 .menu__resume {
   position: absolute;
   top: 2.5em;
