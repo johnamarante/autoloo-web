@@ -9,8 +9,9 @@ const TOKEN = { emPerUnit: 8 / 10.43, maxW: 10.4, maxH: 9 };
 
 export function tokenHtml(data, unit, { where, index, selected = false, frozen = false, facing = "right" } = {}) {
   const look = unitLook(data, unit);
+  // A card can let its art stand taller than other units' (the rocket trooper and his pole).
   const art = look.artLayers.length
-    ? spriteStageHtml(layoutSprites(look.artLayers, TOKEN), "token__stage")
+    ? spriteStageHtml(layoutSprites(look.artLayers, { ...TOKEN, maxH: look.card?.tokenMaxH ?? TOKEN.maxH }), "token__stage")
     : `<div class="token__noart">${escapeHtml(look.name)}</div>`;
   const label = `${look.name}, ${unit.attack} attack, ${unit.health} health, rank ${unit.rank}${
     where === "shop" ? `, costs ${unit.cost}${frozen ? ", in reserve" : ""}` : ""

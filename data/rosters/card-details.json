@@ -531,7 +531,8 @@
           "tier": 2,
           "tierSource": "guess",
           "cost": 3,
-          "art": ["britain/congreverockets_left_0_0_.svg", { "sprite": "britain/british_rockettrooper_left_0_2_.svg", "offset": [5.5, -1] }],
+          "art": ["britain/congreverockets_left_0_0_.svg", { "sprite": "britain/british_rockettrooper_left_0_2_.svg", "offset": [7.9, 6.5] }],
+          "tokenMaxH": 18,
           "abilities": [
             { "trigger": "battle", "keyword": "Rocket Barrage", "text": "Hit every enemy in the first 3 places. Must stand at least 2 places back." }
           ]
