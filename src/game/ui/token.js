@@ -5,6 +5,8 @@ import { unitLook } from "./data.js";
 import { WEAPONS, badgeSrc, companyKind, weaponKey, weaponSrc } from "../../cards/weapons.js";
 
 const UI = new URL("../../../assets/ui/", import.meta.url).href;
+// Unity's icon_heart, which its units draw their health number on.
+const HEART = new URL("../../../assets/icons/icon_heart.svg", import.meta.url).href;
 // Token geometry in em; the French line infantryman stands 8em tall.
 const TOKEN = { emPerUnit: 8 / 10.43, maxW: 10.4, maxH: 9 };
 
@@ -35,7 +37,7 @@ export function tokenHtml(data, unit, { where, index, selected = false, frozen =
       }
       <span class="token__weapon" data-weapon="${weapon}"><img src="${weaponSrc(weapon)}" alt=""></span>
       <span class="token__stat token__stat--atk"><span class="token__num">${unit.attack}</span></span>
-      <span class="token__stat token__stat--hp"><span class="token__num">${unit.health}</span></span>
+      <span class="token__stat token__stat--hp"><img class="token__heart" src="${HEART}" alt=""><span class="token__num">${unit.health}</span></span>
     </button>`;
 }
 

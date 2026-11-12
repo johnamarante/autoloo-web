@@ -496,9 +496,31 @@ h2 {
   text-shadow: 0 0.08em 0.1em rgba(0, 0, 0, 0.35);
 }
 
+/* Health is its number on Unity's heart (icon_heart, stretched 1.5 x 1.75 as
+   on the Unity units), the number outlined like the attack's. */
 .token__stat--hp {
-  right: 0.4em;
-  background: radial-gradient(circle at 35% 30%, #c8383c, var(--hp) 70%);
+  right: 0.25em;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  -webkit-text-stroke: 0.16em #14110d;
+  paint-order: stroke fill;
+  text-shadow: 0 0.08em 0.1em rgba(0, 0, 0, 0.35);
+}
+
+.token__heart {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2.15em;
+  height: 1.9em;
+  max-width: none;
+  transform: translate(-50%, -46%);
+  filter: drop-shadow(0 0.06em 0.08em rgba(40, 28, 12, 0.35));
+}
+
+.token__stat--hp .token__num {
+  position: relative;
 }
 
 /* The unit's weapon (the Unity "Attack" object's icon_weapon), lying behind
