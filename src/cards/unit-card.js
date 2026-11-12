@@ -4,6 +4,7 @@ import { KEYWORDS, TRIGGERS, TRIGGER_ORDER } from "./glossary.js";
 import { icon } from "./icons.js";
 import { installTooltips } from "./tooltip.js";
 import { layoutSprites, spriteStageHtml } from "./sprite-art.js";
+import { WEAPONS, weaponKey, weaponSrc } from "./weapons.js";
 
 // Art panel geometry in em (matches .ucard__art in unit-card.css). The French
 // line infantryman (10.43 Unity units tall) is the reference for scale.
@@ -116,9 +117,16 @@ function artHtml(unit, ctx) {
     </figure>
     <div class="ucard__badges">
       <span class="badge" title="${TYPE_LABEL[unit.type]}">${icon(typeIcon(unit))}${TYPE_LABEL[unit.type]}</span>
+      ${weaponBadge(weaponKey(unit.unitId, unit.type))}
       ${unit.maxAllowed ? `<span class="badge badge--limit" title="You can field at most ${unit.maxAllowed}">Limit ${unit.maxAllowed}</span>` : ""}
       ${odds ? `<span class="badge" title="Share of shop rolls among playable ${esc(ctx.roster.name)} units">${rarity(odds)} · ${Math.round(odds * 100)}%</span>` : ""}
     </div>`;
+}
+
+// What the unit fights with: the same icon the board shows behind its attack number.
+function weaponBadge(key) {
+  const w = WEAPONS[key];
+  return `<span class="badge badge--weapon kw kw--plain" tabindex="0" data-tip="${esc(`Fights with: ${w.label}. ${w.tip}`)}"><img src="${weaponSrc(key)}" alt="" data-weapon="${key}">${esc(w.label)}</span>`;
 }
 
 function rankHtml(unit, rank, interactive) {

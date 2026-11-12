@@ -495,6 +495,66 @@ h2 {
   background: radial-gradient(circle at 35% 30%, #c8383c, var(--hp) 70%);
 }
 
+/* The unit's weapon (the Unity "Attack" object's icon_weapon), on a small
+   plate tucked behind the top of the attack circle. Diagonal icons are turned
+   level, pointing at the enemy. */
+.token__weapon {
+  position: absolute;
+  left: 0;
+  bottom: 2.75em;
+  display: grid;
+  place-items: center;
+  width: 4.6em;
+  height: 2.1em;
+  border-radius: 1.05em;
+  border: 0.1em solid #e3c36b;
+  background: radial-gradient(circle at 40% 30%, #fffaf0, #efe0b8 80%);
+  box-shadow: 0 0.12em 0.2em rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.token__weapon img {
+  grid-area: 1 / 1;
+  width: var(--w, 4.1em);
+  max-width: none;
+  margin-top: -0.4em; /* centre on the part of the plate the circle leaves showing */
+  transform: rotate(var(--rot, 0deg));
+}
+
+.token__weapon[data-weapon="lightMusket"] img { --w: 4em; }
+.token__weapon[data-weapon="rifle"] img { --w: 2.8em; --rot: 135deg; }
+.token__weapon[data-weapon="sabre"] img { --w: 2.9em; --rot: 145deg; }
+.token__weapon[data-weapon="lance"] img { --w: 2.8em; --rot: 45deg; }
+.token__weapon[data-weapon="cannonball"] img { --w: 1.25em; }
+.token__weapon[data-weapon="rocket"] img { --w: 2.7em; --rot: 38deg; }
+
+/* Companies the battalion carries (Unity's skirmisher_Badge and grenadier_Badge),
+   stacked above the health number. A spent skirmisher badge fades out. */
+.token__badges {
+  position: absolute;
+  right: 0.3em;
+  bottom: 3.7em;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 0.2em;
+  width: 2.8em;
+  pointer-events: none;
+}
+
+.token__badge {
+  max-width: 2.8em;
+  max-height: 2.6em;
+  filter: drop-shadow(0 0.1em 0.12em rgba(40, 28, 12, 0.45));
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+.token__badge.is-spent {
+  opacity: 0;
+  transform: scale(0.6);
+}
+
 .token__rank {
   position: absolute;
   top: 0.3em;

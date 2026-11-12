@@ -231,6 +231,34 @@
   border: 0.1em solid rgba(140, 122, 99, 0.45);
 }
 
+/* The weapon badge: the icon the board shows behind the attack number. Long
+   icons are kept short; diagonal ones are turned level. */
+.badge--weapon img {
+  height: 1.15em;
+  max-width: 3.4em;
+  object-fit: contain;
+}
+
+.badge--weapon img[data-weapon="musket"],
+.badge--weapon img[data-weapon="lightMusket"] {
+  height: auto;
+  width: 3.4em;
+}
+
+.badge--weapon img[data-weapon="rifle"],
+.badge--weapon img[data-weapon="lance"],
+.badge--weapon img[data-weapon="sabre"],
+.badge--weapon img[data-weapon="rocket"] {
+  height: 1.6em;
+  margin: -0.25em 0;
+  transform: rotate(var(--rot));
+}
+
+.badge--weapon img[data-weapon="rifle"] { --rot: 135deg; }
+.badge--weapon img[data-weapon="lance"] { --rot: 45deg; }
+.badge--weapon img[data-weapon="sabre"] { --rot: 145deg; }
+.badge--weapon img[data-weapon="rocket"] { --rot: 38deg; }
+
 .badge--limit {
   color: #fff;
   background: var(--nation);

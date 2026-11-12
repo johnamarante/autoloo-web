@@ -97,8 +97,14 @@ export function mountBattle(root, ctx) {
   function setStat({ uid, attack, health }) {
     const u = units.get(uid);
     if (!u) return;
-    if (attack !== undefined) u.el.querySelector(".token__stat--atk").textContent = attack;
-    if (health !== undefined) u.el.querySelector(".token__stat--hp").textContent = Math.max(0, health);
+    if (attack !== undefined) u.el.querySelector(".token__stat--atk .token__num").textContent = attack;
+    if (health !== undefined) u.el.querySelector(".token__stat--hp .token__num").textContent = Math.max(0, health);
+  }
+
+  // Once a battalion has sent out its skirmishers (or had no room to), its badge fades,
+  // as Unity turns off skirmisher_Badge when it disables the Skirmish component.
+  function spendBadge(uid, kind) {
+    units.get(uid)?.el.querySelector(`.token__badge[data-badge="${kind}"]`)?.classList.add("is-spent");
   }
 
   // Effects ------------------------------------------------------------------
@@ -263,12 +269,14 @@ export function mountBattle(root, ctx) {
       const el = addUnit(e.unit, e.side, 1);
       if (from) el.style.setProperty("--x", from.el.style.getPropertyValue("--x"));
       el.classList.add("is-arriving");
+      if (e.reason === "skirmish") spendBadge(e.from, "skirmisher");
       floatText(e.unit.uid, e.reason === "skirmish" ? "Skirmish!" : "Grenadiers!", "info");
       say(e.reason === "skirmish" ? "Skirmishers step out." : "Grenadiers step in.");
       await wait(450);
     },
     async skirmishBonus(e) {
       setStat(e.stat);
+      spendBadge(e.uid, "skirmisher");
       floatText(e.uid, "+1 attack", "good");
       await wait(350);
     },

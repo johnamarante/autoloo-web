@@ -2,6 +2,7 @@
 // health badges, a rank chevron, and (in the shop) its cost and whether it is held in reserve.
 import { layoutSprites, spriteStageHtml } from "../../cards/sprite-art.js";
 import { unitLook } from "./data.js";
+import { WEAPONS, badgeSrc, companyKind, weaponKey, weaponSrc } from "../../cards/weapons.js";
 
 const UI = new URL("../../../assets/ui/", import.meta.url).href;
 // Token geometry in em; the French line infantryman stands 8em tall.
@@ -13,18 +14,41 @@ export function tokenHtml(data, unit, { where, index, selected = false, frozen =
   const art = look.artLayers.length
     ? spriteStageHtml(layoutSprites(look.artLayers, { ...TOKEN, maxH: look.card?.tokenMaxH ?? TOKEN.maxH }), "token__stage")
     : `<div class="token__noart">${escapeHtml(look.name)}</div>`;
-  const label = `${look.name}, ${unit.attack} attack, ${unit.health} health, rank ${unit.rank}${
-    where === "shop" ? `, costs ${unit.cost}${frozen ? ", in reserve" : ""}` : ""
-  }`;
+  const def = data.catalog.def(unit.id);
+  const weapon = weaponKey(unit.id, def?.type ?? "infantry");
+  const badges = companyBadges(def, unit);
+  const label = `${look.name}, ${unit.attack} attack with ${WEAPONS[weapon].label.toLowerCase()}, ${unit.health} health, rank ${unit.rank}${
+    badges.length ? `, ${badges.map((b) => (b === "skirmisher" ? "skirmishers" : "grenadiers")).join(" and ")} attached` : ""
+  }${where === "shop" ? `, costs ${unit.cost}${frozen ? ", in reserve" : ""}` : ""}`;
   return `
     <button type="button" class="token${selected ? " is-selected" : ""}${frozen ? " is-frozen" : ""}" data-facing="${facing}"
       data-where="${where}" data-index="${index}" data-uid="${unit.uid}" aria-label="${escapeHtml(label)}" aria-pressed="${selected}">
       <span class="token__figure">${art}</span>
       ${where !== "enemy" ? `<img class="token__rank" src="${UI}rank/${Math.min(unit.rank, 9)}.svg" alt="">` : ""}
       ${where === "shop" ? `<span class="token__cost"><img src="${UI}coin.svg" alt="">${unit.cost}</span>` : ""}
-      <span class="token__stat token__stat--atk">${unit.attack}</span>
-      <span class="token__stat token__stat--hp">${unit.health}</span>
+      ${
+        badges.length
+          ? `<span class="token__badges">${badges
+              .map((kind) => `<img class="token__badge" data-badge="${kind}" src="${badgeSrc(kind, unit.id)}" alt="">`)
+              .join("")}</span>`
+          : ""
+      }
+      <span class="token__weapon" data-weapon="${weapon}"><img src="${weaponSrc(weapon)}" alt=""></span>
+      <span class="token__stat token__stat--atk"><span class="token__num">${unit.attack}</span></span>
+      <span class="token__stat token__stat--hp"><span class="token__num">${unit.health}</span></span>
     </button>`;
+}
+
+// The companies a battalion carries once they are unlocked (Unit.CheckUnlocksOnStart
+// turns on Skirmish and GrenadierAttack, and with them the badges), or, for a
+// company on the field, its own badge.
+function companyBadges(def, unit) {
+  const own = companyKind(unit.id);
+  if (own) return [own];
+  const out = [];
+  if (def?.skirmish && unit.rank >= def.skirmish.unlockRank) out.push("skirmisher");
+  if (def?.grenadiers && unit.rank >= def.grenadiers.unlockRank) out.push("grenadier");
+  return out;
 }
 
 export function escapeHtml(s) {
