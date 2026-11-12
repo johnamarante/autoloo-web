@@ -485,9 +485,15 @@ h2 {
   pointer-events: none;
 }
 
+/* Attack is a bare number drawn over the unit's weapon, as in Unity: no disc. */
 .token__stat--atk {
   left: 0.4em;
-  background: radial-gradient(circle at 35% 30%, #5a6475, var(--atk) 70%);
+  border: 0;
+  background: none;
+  box-shadow: none;
+  -webkit-text-stroke: 0.16em #14110d;
+  paint-order: stroke fill;
+  text-shadow: 0 0.08em 0.1em rgba(0, 0, 0, 0.35);
 }
 
 .token__stat--hp {
@@ -495,46 +501,52 @@ h2 {
   background: radial-gradient(circle at 35% 30%, #c8383c, var(--hp) 70%);
 }
 
-/* The unit's weapon (the Unity "Attack" object's icon_weapon), on a small
-   plate tucked behind the top of the attack circle. Diagonal icons are turned
-   level, pointing at the enemy. */
+/* The unit's weapon (the Unity "Attack" object's icon_weapon), lying behind
+   the attack number: a point on the number's centre that the icon is laid
+   across, butt low on the left and muzzle or point up towards the enemy.
+   Icons drawn pointing the other way are mirrored (--flip). */
 .token__weapon {
   position: absolute;
-  left: 0;
-  bottom: 2.75em;
-  display: grid;
-  place-items: center;
-  width: 4.6em;
-  height: 2.1em;
-  border-radius: 1.05em;
-  border: 0.1em solid #e3c36b;
-  background: radial-gradient(circle at 40% 30%, #fffaf0, #efe0b8 80%);
-  box-shadow: 0 0.12em 0.2em rgba(0, 0, 0, 0.3);
-  overflow: hidden;
+  left: 2.11em;
+  bottom: 1.71em;
+  width: 0;
+  height: 0;
   pointer-events: none;
 }
 
 .token__weapon img {
-  grid-area: 1 / 1;
-  width: var(--w, 4.1em);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--w, 6.6em);
+  height: var(--h, auto);
   max-width: none;
-  margin-top: -0.4em; /* centre on the part of the plate the circle leaves showing */
-  transform: rotate(var(--rot, 0deg));
+  transform: translate(calc(-50% + var(--dx, 0.7em)), calc(-50% + var(--dy, 0.5em))) rotate(var(--rot, -30deg)) scaleX(var(--flip, 1));
+  filter: drop-shadow(0 0.06em 0.06em rgba(40, 28, 12, 0.35));
 }
 
-.token__weapon[data-weapon="lightMusket"] img { --w: 4em; }
-.token__weapon[data-weapon="rifle"] img { --w: 2.8em; --rot: 135deg; }
-.token__weapon[data-weapon="sabre"] img { --w: 2.9em; --rot: 145deg; }
-.token__weapon[data-weapon="lance"] img { --w: 2.8em; --rot: 45deg; }
-.token__weapon[data-weapon="cannonball"] img { --w: 1.25em; }
-.token__weapon[data-weapon="rocket"] img { --w: 2.7em; --rot: 38deg; }
+/* Enemy units face left, so their weapons point left too. */
+.token[data-facing="left"] .token__weapon {
+  transform: scaleX(-1);
+}
+
+/* Unity squashes the line musket to a third of its length (scale 0.5 x 1.5),
+   which makes it the stocky gun in the Unity build; the light musket keeps its shape. */
+.token__weapon[data-weapon="musket"] img { --h: 1.9em; }
+.token__weapon[data-weapon="lightMusket"] img { --w: 6.4em; }
+.token__weapon[data-weapon="rifle"] img { --w: 5em; --rot: 0deg; --flip: -1; --dx: 0.4em; --dy: -0.2em; }
+.token__weapon[data-weapon="sabre"] img { --w: 5em; --rot: 0deg; --flip: -1; --dx: 0.5em; --dy: -0.3em; }
+.token__weapon[data-weapon="lance"] img { --w: 5.6em; --rot: 0deg; --dx: 0.6em; --dy: -0.6em; }
+.token__weapon[data-weapon="cannonball"] img { --w: 2.7em; --rot: 0deg; --dx: 0em; --dy: 0em; }
+.token__weapon[data-weapon="rocket"] img { --w: 5em; --rot: 0deg; --dx: 0.5em; --dy: -0.4em; }
 
 /* Companies the battalion carries (Unity's skirmisher_Badge and grenadier_Badge),
-   stacked above the health number. A spent skirmisher badge fades out. */
+   stacked on the left above the attack number, grenadiers on top, clear of
+   the unit. A spent skirmisher badge fades out. */
 .token__badges {
   position: absolute;
-  right: 0.3em;
-  bottom: 3.7em;
+  left: 0.3em;
+  bottom: 3.6em;
   display: flex;
   flex-direction: column-reverse;
   align-items: center;
