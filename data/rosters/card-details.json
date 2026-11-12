@@ -105,8 +105,9 @@
           "tierSource": "prefab",
           "cost": 3,
           "sprite": "france/french_lancer_left_0_2_.svg",
+          "swarmSprite": "france/french_lancer_green_left_0_2_.svg",
           "abilities": [
-            { "trigger": "firstClash", "keyword": "Lance Charge", "text": "Deals full damage to infantry in square." }
+            { "trigger": "front", "keyword": "Swarm Attack", "text": "Splits its health to fill the empty places behind it: one green-coated lancer per place, each with the same attack and at least 1 health. It keeps any odd point." }
           ]
         },
         {

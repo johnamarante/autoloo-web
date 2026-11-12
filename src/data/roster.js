@@ -73,6 +73,8 @@ function buildUnit(nation, meta, rowsByName, sprites, game) {
     playable: !!g && game.nations[nation].roster.includes(meta.unitId),
     csvAbilities: row.Abilities,
     artLayers: artLayers(meta, sprites),
+    // Swarm Attack copies are drawn from this sprite (the lancer with a green coat).
+    swarmArtLayers: meta.swarmSprite ? artLayers({ sprite: meta.swarmSprite }, sprites) : null,
     attachments: (meta.attachments || []).map((a) => {
       const rule = g?.[a.kind === "skirmisher" ? "skirmish" : "grenadiers"];
       const company = rule && game.companies[rule.company];

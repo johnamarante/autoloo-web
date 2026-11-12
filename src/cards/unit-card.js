@@ -219,7 +219,6 @@ function tacticsHtml(unit) {
 // Derived from the battle rules in GameManager.ComputeAttackStrengths and Cannonball.
 function tactics(unit) {
   const traits = [];
-  const isLancer = unit.abilities.some((a) => a.keyword === "Lance Charge");
   if (unit.type === "infantry") {
     if (unit.formsSquare) {
       traits.push(trait("square", "Forms square", KEYWORDS.Square));
@@ -231,8 +230,8 @@ function tactics(unit) {
   if (unit.type === "cavalry") {
     return {
       traits,
-      good: isLancer ? "Squares on the first clash" : "Artillery and units that cannot form square",
-      bad: isLancer ? "Squares after the first clash" : "Infantry in square (deals only 1 damage)",
+      good: "Artillery and units that cannot form square",
+      bad: "Infantry in square (deals only 1 damage)",
     };
   }
   if (unit.range) traits.push(trait("target", `Range ${unit.range}`, `Fires round shot from up to ${unit.range} places back in your line.`));

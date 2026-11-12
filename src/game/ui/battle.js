@@ -274,6 +274,20 @@ export function mountBattle(root, ctx) {
       say(e.reason === "skirmish" ? "Skirmishers step out." : "Grenadiers step in.");
       await wait(450);
     },
+    // Swarm Attack: the lancer's health drops and its green-coated copies ride
+    // out from it; the arrange that follows spreads them behind it.
+    async swarm(e) {
+      const from = units.get(e.from);
+      setStat(e.stat);
+      floatText(e.from, "Swarm!", "info");
+      say(`The lancers swarm: ${e.units.length + 1} squadrons.`);
+      for (const snap of e.units) {
+        const el = addUnit(snap, e.side, 1);
+        if (from) el.style.setProperty("--x", from.el.style.getPropertyValue("--x"));
+        el.classList.add("is-arriving");
+      }
+      await wait(450);
+    },
     async skirmishBonus(e) {
       setStat(e.stat);
       spendBadge(e.uid, "skirmisher");

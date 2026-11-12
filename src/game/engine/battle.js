@@ -6,7 +6,7 @@
 //   -> close up -> melee -> grenadiers + cleanup -> close up
 //
 // It returns the result plus an event log; the battle screen animates the log.
-import { createCompany } from "./units.js";
+import { createCompany, createSwarmCopy } from "./units.js";
 
 const MAX_CYCLES = 200;
 
@@ -57,7 +57,7 @@ function def(b, u) {
 }
 
 function snapshot(u) {
-  return { uid: u.uid, id: u.id, name: u.name, attack: u.attack, attackBonus: u.attackBonus, health: u.health, rank: u.rank, isSkirmisher: u.isSkirmisher };
+  return { uid: u.uid, id: u.id, name: u.name, attack: u.attack, attackBonus: u.attackBonus, health: u.health, rank: u.rank, isSkirmisher: u.isSkirmisher, swarmCopy: !!u.swarmCopy };
 }
 
 /** What the battle screen shows on a unit's badges: attack including bonuses, and health. */
@@ -96,18 +96,48 @@ function arrange(b) {
     initAbilities(b);
     b.initialised = true;
   }
-  for (const side of ["left", "right"]) {
-    b.sides[side].forEach((u, i) => {
-      u.position = i + 1;
-      if (def(b, u).artillery) u.attackBonus = u.position === 1 ? b.rules.canisterAttackBonus : 0;
-    });
-  }
+  const place = () => {
+    for (const side of ["left", "right"]) {
+      b.sides[side].forEach((u, i) => {
+        u.position = i + 1;
+        if (def(b, u).artillery) u.attackBonus = u.position === 1 ? b.rules.canisterAttackBonus : 0;
+      });
+    }
+  };
+  place();
+  const swarmed = ["left", "right"].map((side) => swarm(b, side));
+  if (swarmed.some(Boolean)) place();
   b.events.push({
     type: "arrange",
     left: b.sides.left.map((u) => u.uid),
     right: b.sides.right.map((u) => u.uid),
     stats: [...b.sides.left, ...b.sides.right].map(shown),
   });
+}
+
+// Designed ability (lancers' Swarm Attack): when a lancer reaches the front, it
+// splits its health to fill the empty places behind it. One copy per empty
+// place, as long as every copy gets at least 1 health; the health is shared
+// evenly and the front lancer keeps what is left over (6 health, 4 places:
+// 2, 1, 1, 1, 1). The copies keep its attack and land right behind it, pushing
+// the rest of the line back. A copy that later reaches the front can split too.
+function swarm(b, side) {
+  const u = front(b, side);
+  if (!u || u.reachedFront) return false;
+  u.reachedFront = true;
+  if (!def(b, u).swarm || u.health < 2) return false;
+  const copies = Math.min(b.rules.lineSlots - b.sides[side].length, u.health - 1);
+  if (copies < 1) return false;
+  const share = Math.floor(u.health / (copies + 1));
+  u.health -= share * copies;
+  const units = Array.from({ length: copies }, () => {
+    const c = enter(createSwarmCopy(u, share));
+    c.attackBonus = u.attackBonus;
+    return c;
+  });
+  b.sides[side].splice(1, 0, ...units);
+  b.events.push({ type: "swarm", side, from: u.uid, stat: shown(u), units: units.map(snapshot) });
+  return true;
 }
 
 // Designed ability (Grenadiers a Pied de la Garde): every cycle, other infantry gain health.
@@ -199,14 +229,14 @@ function artilleryPhase(b) {
   }
 }
 
-// ComputeAttackStrengths: cavalry hitting a square deals 1 (a lancer's first clash excepted).
+// ComputeAttackStrengths: cavalry hitting a square deals 1. (Unity's lancers
+// broke squares on their first clash; in 1.5 they swarm instead.)
 function meleeStrengths(b) {
   const l = front(b, "left");
   const r = front(b, "right");
   const hit = (u) => u.attack + u.attackBonus;
-  const breaksSquare = (cav) => cav.cycle === 1 && def(b, cav).lancer;
-  if (l.squared && isCavalry(r) && !breaksSquare(r)) return { left: 1, right: hit(l) };
-  if (r.squared && isCavalry(l) && !breaksSquare(l)) return { left: hit(r), right: 1 };
+  if (l.squared && isCavalry(r)) return { left: 1, right: hit(l) };
+  if (r.squared && isCavalry(l)) return { left: hit(r), right: 1 };
   return { left: hit(r), right: hit(l) };
 }
 

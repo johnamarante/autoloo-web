@@ -29,7 +29,10 @@ export async function loadGameData() {
 /** Display name and sprite layers for any unit, company or battalion. */
 export function unitLook(data, unit) {
   const entry = data.cards.get(unit.id);
-  if (entry) return { name: entry.card.displayName, artLayers: entry.card.artLayers, card: entry.card, roster: entry.roster };
+  if (entry) {
+    const artLayers = unit.swarmCopy && entry.card.swarmArtLayers ? entry.card.swarmArtLayers : entry.card.artLayers;
+    return { name: entry.card.displayName, artLayers, card: entry.card, roster: entry.roster };
+  }
   const company = data.companies.get(unit.id);
   return { name: company?.name ?? unit.kind, artLayers: company?.artLayers ?? [], card: null, roster: null };
 }

@@ -19,7 +19,7 @@ export const KEYWORDS = {
   Scout: "Lets you see the enemy army during deployment, before you commit by ending your turn.",
   "Win Buff": "Grows stronger every time it destroys an enemy unit.",
   Momentum: "Grows stronger every time it destroys an enemy unit.",
-  "Lance Charge": "Lancers hit hardest on their first clash, before an enemy square can stop them.",
+  "Swarm Attack": "Lancers spread out to fill the gaps in their own line, trading health for numbers.",
   Rally: "Boosts other friendly cavalry when this unit is deployed.",
   Rearguard: "Comes back once, weakened, as long as a friendly unit is behind it.",
   "Bolster Morale": "Boosts friendly units when this unit is deployed.",
@@ -31,6 +31,6 @@ export const KEYWORDS = {
   "Rifle Tactics": "Riflemen shoot from second place in line, so another unit can take the hits in front.",
   Regroup: "When this unit falls, survivors from the same nation absorb its veterans.",
   "United Netherlands": "Buy the Belgian and Dutch lines together in one turn to get the second one free.",
-  Square: "When charged by cavalry, this infantry forms square: +3 attack, and it takes only 1 damage per cavalry attack (lancers on their first clash excepted). Units that only just reached the front mid-battle have no time to form one. Artillery deals double damage to a square.",
+  Square: "When charged by cavalry, this infantry forms square: +3 attack, and it takes only 1 damage per cavalry attack. Units that only just reached the front mid-battle have no time to form one. Artillery deals double damage to a square.",
   Rank: "Merge a duplicate of this unit onto it to rank up. Each rank adds +1 attack and +1 health and can unlock companies.",
 };

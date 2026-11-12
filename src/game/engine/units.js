@@ -69,6 +69,31 @@ export function createCompany(catalog, companyId, parent, { skirmisher }) {
   };
 }
 
+/**
+ * A lancer split off by Swarm Attack (designed ability): the same unit, attack
+ * and abilities as its parent, with its share of the health, drawn with a green
+ * coat. Like a company it lives for one battle and is never saved.
+ */
+export function createSwarmCopy(parent, health) {
+  return {
+    uid: nextUid++,
+    id: parent.id,
+    kind: parent.kind,
+    nation: parent.nation,
+    name: `${parent.name}_swarm`,
+    type: parent.type,
+    attack: parent.attack,
+    health,
+    rank: 0,
+    maxRank: 0,
+    cost: 0,
+    formsSquare: false,
+    isSkirmisher: false,
+    company: true,
+    swarmCopy: true,
+  };
+}
+
 // Mirrors Unit.ComputeSumFromFormulaString.
 export function evalFormula(formula, parentRank) {
   let sum = 0;
