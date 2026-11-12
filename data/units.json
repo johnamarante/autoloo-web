@@ -122,7 +122,7 @@
     "british_rockets": {
       "kind": "rockettrooper", "nation": "britain", "type": "artillery",
       "attack": 1, "health": 3, "maxRank": 3, "tier": 2, "cost": 3, "chance": 10,
-      "rockets": { "targets": 3, "minPosition": 2, "designed": true }
+      "rockets": { "minPosition": 2, "designed": true }
     },
     "british_rifles": {
       "kind": "rifleman", "nation": "britain", "type": "infantry", "formsSquare": false,

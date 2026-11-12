@@ -184,10 +184,16 @@ function artilleryPhase(b) {
         b.events.push({ type: "fire", weapon: "rifle", from: u.uid, to: target.uid, damage: u.attack });
         damage(b, enemySide, target, u.attack);
       }
-      if (d.rockets && u.position >= d.rockets.minPosition) {
-        const targets = b.sides[enemySide].slice(0, d.rockets.targets);
-        b.events.push({ type: "fire", weapon: "rockets", from: u.uid, to: targets.map((t) => t.uid), damage: u.attack });
-        targets.forEach((t) => damage(b, enemySide, t, u.attack));
+      if (d.rockets && u.position >= d.rockets.minPosition && b.sides[enemySide].some((t) => t.health > 0)) {
+        // The attack is split into single rockets: one to each enemy from the
+        // front back, then round again from the front (attack 6 against five
+        // enemies hits 2, 1, 1, 1, 1). Like round shot, rockets do nothing to skirmishers.
+        const enemies = b.sides[enemySide].filter((t) => t.health > 0);
+        const to = Array.from({ length: u.attack }, (_, i) => enemies[i % enemies.length]);
+        const hits = new Map();
+        for (const t of to) hits.set(t, (hits.get(t) ?? 0) + (t.isSkirmisher ? 0 : 1));
+        b.events.push({ type: "fire", weapon: "rockets", from: u.uid, to: to.map((t) => t.uid), damage: u.attack });
+        hits.forEach((dmg, t) => damage(b, enemySide, t, dmg));
       }
     }
   }

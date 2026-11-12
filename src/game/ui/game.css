@@ -396,6 +396,7 @@ h2 {
 /* Unit tokens ------------------------------------------------------------ */
 
 .token {
+  --stat-gap: 4.6; /* token em between the centres of the attack and health numbers */
   position: relative;
   width: 12em;
   height: 14em;
@@ -470,6 +471,8 @@ h2 {
 }
 
 .token__stat {
+  /* Attack and health sit either side of the token centre, --stat-gap token em apart;
+     a stat em is 1.9 token em, and a stat is 1.8 stat em wide. */
   position: absolute;
   bottom: 0;
   display: grid;
@@ -487,7 +490,7 @@ h2 {
 
 /* Attack is a bare number drawn over the unit's weapon, as in Unity: no disc. */
 .token__stat--atk {
-  left: 0.4em;
+  left: calc(50% - var(--stat-gap) / 3.8 * 1em - 0.9em);
   border: 0;
   background: none;
   box-shadow: none;
@@ -499,7 +502,7 @@ h2 {
 /* Health is its number on Unity's heart (icon_heart, stretched 1.5 x 1.75 as
    on the Unity units), the number outlined like the attack's. */
 .token__stat--hp {
-  right: 0.25em;
+  right: calc(50% - var(--stat-gap) / 3.8 * 1em - 0.9em);
   border: 0;
   background: none;
   box-shadow: none;
@@ -529,7 +532,7 @@ h2 {
    Icons drawn pointing the other way are mirrored (--flip). */
 .token__weapon {
   position: absolute;
-  left: 2.11em;
+  left: calc(50% - var(--stat-gap) / 2 * 1em);
   bottom: 1.71em;
   width: 0;
   height: 0;
