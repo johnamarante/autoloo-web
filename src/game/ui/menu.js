@@ -7,6 +7,7 @@ import { unitLook } from "./data.js";
 import { NAME_MAX } from "../net/player.js";
 import { handleSoundToggle, soundTogglesHtml } from "./sound-toggles.js";
 import { VERSION } from "../version.js";
+import { RELEASE_NOTES } from "../release-notes.js";
 
 const UI = new URL("../../../assets/ui/", import.meta.url).href;
 
@@ -64,7 +65,7 @@ export function mountMenu(root, ctx) {
           .join("")}
       </div>
       <aside class="card-place card-place--menu" aria-live="polite"></aside>
-      <p class="menu__version">Version ${VERSION}</p>
+      <p class="menu__version">Version ${VERSION} <button type="button" class="btn btn--small" data-act="notes">Release notes</button></p>
       ${ctx.status?.player.needsName ? nameSetupHtml(ctx.status.player.name) : ""}
     </div>`;
 
@@ -93,7 +94,26 @@ export function mountMenu(root, ctx) {
     if (btn?.dataset.act === "login") openLogin(false);
     if (btn?.dataset.act === "signup") openLogin(true);
     if (btn?.dataset.act === "logout") ctx.onLogout();
+    if (btn?.dataset.act === "notes") openNotes(btn);
   };
+
+  function openNotes(opener) {
+    root.querySelector(".notes")?.remove();
+    root.querySelector(".screen").insertAdjacentHTML("beforeend", releaseNotesHtml());
+    const dialog = root.querySelector(".notes");
+    const close = () => {
+      dialog.remove();
+      opener.focus();
+    };
+    dialog.querySelector("[data-notes=close]").focus();
+    dialog.onclick = (e) => {
+      e.stopPropagation();
+      if (e.target === dialog || e.target.closest("[data-notes=close]")) close();
+    };
+    dialog.onkeydown = (e) => {
+      if (e.key === "Escape") close();
+    };
+  }
 
   function openLogin(signup) {
     root.querySelector(".login")?.remove();
@@ -197,6 +217,25 @@ function loginFormHtml(signup) {
           ${signup ? "" : '<button type="button" class="login__link" data-login="reset">Forgot password?</button>'}
         </p>
       </form>
+    </div>`;
+}
+
+function releaseNotesHtml() {
+  return `
+    <div class="name-setup notes" role="dialog" aria-modal="true" aria-labelledby="notes-title">
+      <div class="notes__box">
+        <h2 id="notes-title">Release notes</h2>
+        <div class="notes__list" tabindex="0">
+          ${RELEASE_NOTES.map(
+            (r) => `
+            <section class="notes__release">
+              <h3>Version ${escapeHtml(r.version)} <span>${escapeHtml(r.title)}</span></h3>
+              <ul>${r.notes.map((n) => `<li>${escapeHtml(n)}</li>`).join("")}</ul>
+            </section>`
+          ).join("")}
+        </div>
+        <button type="button" class="btn btn--primary" data-notes="close">Close</button>
+      </div>
     </div>`;
 }
 

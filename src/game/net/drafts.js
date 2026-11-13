@@ -9,12 +9,12 @@ export async function findOpponent(store, catalog, nation, round, rng) {
   const enemy = catalog.nations[nation].enemy;
   try {
     const stored = await store.get(draftKey(catalog, enemy, round));
-    const opponent = opponentFromDraft(catalog, enemy, pickDraft(stored?.data, round, rng));
+    const opponent = opponentFromDraft(catalog, enemy, pickDraft(catalog, enemy, stored?.data, round, rng));
     if (opponent) return opponent;
   } catch (err) {
     console.warn("Could not load opponent drafts, using a random army.", err);
   }
-  return randomOpponent(catalog, enemy, rng);
+  return randomOpponent(catalog, enemy, rng, round);
 }
 
 /** WriteToPlayerPaste: the player's latest army and record. */

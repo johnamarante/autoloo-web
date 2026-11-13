@@ -7,12 +7,43 @@ export function draftKey(catalog, nation, round) {
   return `armydraft_${catalog.nations[nation].draftCode}_${Math.min(round, catalog.rules.draftRoundCap)}`;
 }
 
-/** Picks a stored draft for this round, falling back to any draft in the list. */
-export function pickDraft(drafts, round, rng) {
+/**
+ * Picks an army another player drafted on the same turn as this player. If
+ * there is none, it takes the nearest earlier turn, then the nearest later
+ * one. Armies no player could have built by their turn are left out (the old
+ * seed drafts stamped turn 1 hold four units or six-attack guns).
+ */
+export function pickDraft(catalog, nation, drafts, round, rng) {
   if (!Array.isArray(drafts) || !drafts.length) return null;
-  const sameRound = drafts.filter((d) => Number(d.round) === round);
-  const pool = sameRound.length ? sameRound : drafts;
+  const fair = drafts.filter((d) => couldBuild(catalog, nation, d));
+  if (!fair.length) return null;
+  const turns = [...new Set(fair.map((d) => Number(d.round)))];
+  const distance = (t) => (t <= round ? round - t : t - round + 0.5); // earlier turns win ties
+  const turn = turns.reduce((best, t) => (distance(t) < distance(best) ? t : best));
+  const pool = fair.filter((d) => Number(d.round) === turn);
   return pool[rng.int(pool.length)];
+}
+
+/** Most units a line can hold by this turn: 10 coin buys three on turn 1. */
+export function maxUnits(catalog, round) {
+  const { startingCoin, unitCost, lineSlots } = catalog.rules;
+  return Math.min(lineSlots, round * Math.floor(startingCoin / unitCost));
+}
+
+/** Whether a draft is an army a player could really have on its turn. */
+export function couldBuild(catalog, nation, draft) {
+  const round = Number(draft?.round);
+  const details = draft?.UnitDetails ?? [];
+  if (!Number.isInteger(round) || round < 1 || !details.length || details.length > maxUnits(catalog, round)) return false;
+  return details.every((d) => {
+    const id = catalog.idFromName(nation, d.Name);
+    if (!id) return true; // unknown units are skipped when the army is built
+    const def = catalog.def(id);
+    const rank = Number(d.Rank) || 0;
+    // Merges add a point each; deployment boosts (Highlanders) add a few more per turn.
+    const most = (base) => base + rank + 4 * round;
+    return def.tier <= round && rank <= def.maxRank && d.Attack <= most(def.attack) && d.HitPoints <= most(def.health);
+  });
 }
 
 /** Units in front-first order; unknown units are skipped, like Unity's try/catch. */
@@ -22,10 +53,13 @@ export function opponentFromDraft(catalog, nation, draft) {
   return units.length ? { name: String(draft.playername ?? "Unknown"), units } : null;
 }
 
-/** OpponentGeneration.GenerateRandom: five rank 0 units from the enemy roster. */
-export function randomOpponent(catalog, nation, rng) {
-  const roster = catalog.nations[nation].roster;
-  const units = Array.from({ length: 5 }, () => createUnit(catalog, roster[rng.int(roster.length)], { rng }));
+/**
+ * OpponentGeneration.GenerateRandom, sized to the turn: rank 0 units the shop
+ * could have offered by then, three on turn 1 and five after.
+ */
+export function randomOpponent(catalog, nation, rng, round = 1) {
+  const roster = catalog.nations[nation].roster.filter((id) => catalog.def(id).tier <= round && catalog.def(id).chance > 0);
+  const units = Array.from({ length: maxUnits(catalog, round) }, () => createUnit(catalog, roster[rng.int(roster.length)], { rng }));
   return { name: rng.hex8(), units };
 }
 

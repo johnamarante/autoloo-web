@@ -177,7 +177,10 @@ export function mountDeployment(root, ctx) {
     render();
     for (const e of result.events ?? []) {
       if (e.type === "buff") floatAtUid(e.uid, `+${e.attack}/+${e.health}`);
-      if (e.type === "rankUp") floatAtUid(e.uid, `Rank ${e.rank}!`);
+      if (e.type === "rankUp") {
+        sfx("rankUp");
+        floatAtUid(e.uid, `Rank ${e.rank}!`);
+      }
     }
     if (result.action === "sell") floatAt(root.querySelector('[data-act="roll"]'), `+${1 + Math.floor(result.unit.rank / 3)} coin`);
     return true;

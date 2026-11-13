@@ -8,6 +8,7 @@ const cannonFire = [2, 3, 4, 6, 7, 9, 10].map((n) => `cannon-fire-${n}.mp3`);
 
 export const SOUNDS = {
   coin: { files: ["coin.mp3"] }, // Deployment.Roll, paying for a re-roll
+  rankUp: { files: ["rank-up.mp3"] }, // a unit ranks up by merging (rank_up_or_ration_consumed.mp3)
   bugle: { files: ["bugle.mp3"], volume: 0.7 }, // a new shop is drawn
   cannonFire: { files: cannonFire }, // GameManager.PlayCannonballFire
   cannonHit: { files: ["cannon-hit-1.mp3", "cannon-hit-2.mp3"] }, // Cannonball impact
