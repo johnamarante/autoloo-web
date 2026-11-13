@@ -3,6 +3,18 @@
 
 export const RELEASE_NOTES = [
   {
+    version: "1.8",
+    title: "Rations and shop ranks",
+    notes: [
+      "Rations: a new shop beside the recruits. Each costs 3 coin and goes on a deployed unit. Drafting new recruits brings new rations too, and you can hold a ration in reserve.",
+      "Thirteen rations: Bread, Cheese, Vegetables, Wine, Spirits, Hay, Telescope, Drums and Colors for both sides; Onion and the Eagle for France; Bacon and the Claymore Sword for Britain.",
+      "Wine and Onions feed a battalion's skirmishers and grenadiers. Spirits give +3/+3 for one battle. The Telescope sharpens the scout report. Drums fill the recruits with three of one unit. Colors raise the shop one rank.",
+      "Shop ranks: the shop now opens up as you win, not as turns pass. France: Lancers and Cuirassiers at 2 wins, the Young Guard at 4 and the Old Guard at 6. Britain: Congreve Rockets at 2 wins and the Rifles at 4.",
+      "Roll is now Draft Recruits, and it shows your shop rank.",
+      "Matchmaking also matches shop ranks, so you meet armies drafted from a shop like yours.",
+    ],
+  },
+  {
     version: "1.7",
     title: "Fair fights",
     notes: [

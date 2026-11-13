@@ -1,6 +1,7 @@
 // Opponents, as OpponentGeneration.cs builds them: a random army another
 // player drafted at the same round, or five random units as a fallback.
 import { createUnit, fromUnitDetail } from "./units.js";
+import { maxShopRank, rankForWins, shopRank } from "./rations.js";
 
 /** Unity draft key: armydraft_{fr|br}_{round, capped at 3}. */
 export function draftKey(catalog, nation, round) {
@@ -13,10 +14,16 @@ export function draftKey(catalog, nation, round) {
  * one. Armies no player could have built by their turn are left out (the old
  * seed drafts stamped turn 1 hold four units or six-attack guns).
  */
-export function pickDraft(catalog, nation, drafts, round, rng) {
+export function pickDraft(catalog, nation, drafts, round, rng, rank = null) {
   if (!Array.isArray(drafts) || !drafts.length) return null;
-  const fair = drafts.filter((d) => couldBuild(catalog, nation, d));
+  let fair = drafts.filter((d) => couldBuild(catalog, nation, d));
   if (!fair.length) return null;
+  // Same shop rank first, so nobody meets units their own shop cannot offer yet.
+  if (rank !== null) {
+    const same = fair.filter((d) => draftRank(catalog, nation, d) === rank);
+    const below = fair.filter((d) => draftRank(catalog, nation, d) <= rank);
+    fair = same.length ? same : below.length ? below : fair;
+  }
   const turns = [...new Set(fair.map((d) => Number(d.round)))];
   const distance = (t) => (t <= round ? round - t : t - round + 0.5); // earlier turns win ties
   const turn = turns.reduce((best, t) => (distance(t) < distance(best) ? t : best));
@@ -30,19 +37,31 @@ export function maxUnits(catalog, round) {
   return Math.min(lineSlots, round * Math.floor(startingCoin / unitCost));
 }
 
+/**
+ * A draft's shop rank: the one it recorded (Colors can raise it), else what
+ * its wins earned. Armies from before shop ranks only have their wins.
+ */
+export function draftRank(catalog, nation, draft) {
+  const earned = rankForWins(catalog, nation, Number(draft?.wins) || 0);
+  const recorded = Number(draft?.shopRank);
+  return Number.isInteger(recorded) && recorded >= earned && recorded <= maxShopRank(catalog, nation) ? recorded : earned;
+}
+
 /** Whether a draft is an army a player could really have on its turn. */
 export function couldBuild(catalog, nation, draft) {
   const round = Number(draft?.round);
   const details = draft?.UnitDetails ?? [];
   if (!Number.isInteger(round) || round < 1 || !details.length || details.length > maxUnits(catalog, round)) return false;
+  const shop = draftRank(catalog, nation, draft);
   return details.every((d) => {
     const id = catalog.idFromName(nation, d.Name);
     if (!id) return true; // unknown units are skipped when the army is built
     const def = catalog.def(id);
     const rank = Number(d.Rank) || 0;
-    // Merges add a point each; deployment boosts (Highlanders) add a few more per turn.
-    const most = (base) => base + rank + 4 * round;
-    return def.tier <= round && rank <= def.maxRank && d.Attack <= most(def.attack) && d.HitPoints <= most(def.health);
+    // Merges add a point each; deployment boosts and rations a few more per
+    // turn; Spirits (rank 2) adds 3, and the Claymore and Eagle (rank 3 up) double.
+    const most = (base) => (base + rank + 4 * round + (shop >= 2 ? 3 : 0)) * (shop >= 3 ? 2 : 1);
+    return def.tier <= shop && rank <= def.maxRank && d.Attack <= most(def.attack) && d.HitPoints <= most(def.health);
   });
 }
 
@@ -54,11 +73,11 @@ export function opponentFromDraft(catalog, nation, draft) {
 }
 
 /**
- * OpponentGeneration.GenerateRandom, sized to the turn: rank 0 units the shop
- * could have offered by then, three on turn 1 and five after.
+ * OpponentGeneration.GenerateRandom, sized to the turn: rank 0 units a shop of
+ * this rank offers, three on turn 1 and five after.
  */
-export function randomOpponent(catalog, nation, rng, round = 1) {
-  const roster = catalog.nations[nation].roster.filter((id) => catalog.def(id).tier <= round && catalog.def(id).chance > 0);
+export function randomOpponent(catalog, nation, rng, round = 1, rank = 1) {
+  const roster = catalog.nations[nation].roster.filter((id) => catalog.def(id).tier <= Math.min(rank, maxShopRank(catalog, nation)) && catalog.def(id).chance > 0);
   const units = Array.from({ length: maxUnits(catalog, round) }, () => createUnit(catalog, roster[rng.int(roster.length)], { rng }));
   return { name: rng.hex8(), units };
 }
@@ -75,8 +94,10 @@ export function playerKey(userId) {
 }
 
 /** One army as StoreAndLoadArmyDetails writes it, to the player record and to the draft list. */
-export function draftEntry(run, playerName, unitDetails) {
-  return { playername: playerName, round: run.round, wins: run.wins, losses: run.losses, UnitDetails: unitDetails };
+export function draftEntry(run, playerName, unitDetails, rank) {
+  const entry = { playername: playerName, round: run.round, wins: run.wins, losses: run.losses, UnitDetails: unitDetails };
+  if (rank) entry.shopRank = rank;
+  return entry;
 }
 
 /** UpdateArmyDraftsByRosterAndTurn: drafts are stored as { data: [entry, ...] } and only ever appended to. */

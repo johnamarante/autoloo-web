@@ -11,6 +11,7 @@ export function createCatalog(data) {
     nations: data.nations,
     units: data.units,
     companies: data.companies,
+    rations: data.rations ?? {},
     def: (id) => data.units[id],
     /** Finds a unit id from a Unity-style name such as "french_line_1a2b3c4d". */
     idFromName(nation, name) {
@@ -51,6 +52,8 @@ export function createUnit(catalog, id, { rank = 0, attack, health, rng, name } 
 /** A skirmisher or grenadier company spawned from its battalion in battle. */
 export function createCompany(catalog, companyId, parent, { skirmisher }) {
   const def = catalog.companies[companyId];
+  // Wine feeds the skirmishers and onions the grenadiers.
+  const fed = (skirmisher ? parent.skirmishBonus : parent.grenadierBonus) ?? 0;
   return {
     uid: nextUid++,
     id: companyId,
@@ -58,8 +61,8 @@ export function createCompany(catalog, companyId, parent, { skirmisher }) {
     nation: parent.nation,
     name: `${parent.name.split("_")[0]}_${def.kind}_${parent.name.split("_")[2] ?? "00000000"}${skirmisher ? "_skirmisher" : ""}`,
     type: "infantry",
-    attack: evalFormula(def.attackFormula, parent.rank),
-    health: evalFormula(def.healthFormula, parent.rank),
+    attack: evalFormula(def.attackFormula, parent.rank) + fed,
+    health: evalFormula(def.healthFormula, parent.rank) + fed,
     rank: 0,
     maxRank: 0,
     cost: 0,
@@ -121,9 +124,12 @@ export function sellValue(unit) {
   return 1 + rankRefund(unit.rank);
 }
 
-/** Unity's save shape (UnitDetail), with QueuePosition 1 = front. */
+/**
+ * Unity's save shape (UnitDetail), with QueuePosition 1 = front. Rations the
+ * unit carries go in an extra Rations field, which Unity ignores.
+ */
 export function toUnitDetail(unit, queuePosition) {
-  return {
+  const detail = {
     Name: unit.name,
     Attack: unit.attack,
     HitPoints: unit.health,
@@ -131,17 +137,34 @@ export function toUnitDetail(unit, queuePosition) {
     QueuePosition: Math.abs(queuePosition),
     IsSkirmisher: !!unit.isSkirmisher,
   };
+  const rations = carried(unit);
+  if (Object.keys(rations).length) detail.Rations = rations;
+  return detail;
+}
+
+/** What rations left on a unit: Wine, Onion, Spirits (until the battle ends) and the Telescope. */
+export function carried(unit) {
+  const out = {};
+  if (unit.skirmishBonus) out.skirmishBonus = unit.skirmishBonus;
+  if (unit.grenadierBonus) out.grenadierBonus = unit.grenadierBonus;
+  if (unit.spirits) out.spirits = unit.spirits;
+  if (unit.telescope) out.telescope = true;
+  return out;
 }
 
 export function fromUnitDetail(catalog, nation, detail) {
   const id = catalog.idFromName(nation, detail.Name);
   if (!id) return null;
-  return createUnit(catalog, id, {
+  const unit = createUnit(catalog, id, {
     rank: detail.Rank ?? 0,
     attack: detail.Attack,
     health: detail.HitPoints,
     name: detail.Name,
   });
+  const r = detail.Rations ?? {};
+  for (const key of ["skirmishBonus", "grenadierBonus", "spirits"]) if (Number(r[key]) > 0) unit[key] = Number(r[key]);
+  if (r.telescope) unit.telescope = true;
+  return unit;
 }
 
 function randomHex8() {

@@ -4,11 +4,12 @@ import { loadRosters } from "../../data/roster.js";
 import { createCatalog } from "../engine/units.js";
 
 export async function loadGameData() {
-  const [{ rosters, rations, game }, endings] = await Promise.all([
+  const [{ rosters, rations, game }, endings, shopRations] = await Promise.all([
     loadRosters(),
     fetch(new URL("../../../data/endings.json", import.meta.url)).then((r) => r.json()),
+    fetch(new URL("../../../data/rations.json", import.meta.url)).then((r) => r.json()),
   ]);
-  const catalog = createCatalog(game);
+  const catalog = createCatalog({ ...game, rations: shopRations.rations });
   const cards = new Map();
   for (const roster of Object.values(rosters)) {
     for (const card of roster.units) if (card.unitId) cards.set(card.unitId, { card, roster });

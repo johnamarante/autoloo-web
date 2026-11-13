@@ -2,8 +2,8 @@
 // Mirrors Deployment.cs and Unit.OnMouseDown: click a unit to select it, then
 // click a slot (or drag it there) to deploy, merge, move or swap.
 import { canMerge } from "../engine/units.js";
-import { buy, checkEndTurn, heartsLeft, move, roll, sell, toggleFreeze } from "../engine/run.js";
-import { scoutReport } from "../engine/opponent.js";
+import { buy, buyRation, checkEndTurn, heartsLeft, move, roll, sell, shopRank, toggleFreeze, toggleRationFreeze } from "../engine/run.js";
+import { rationRefusal } from "../engine/rations.js";
 import { createUnitCard } from "../../cards/unit-card.js";
 import { layoutSprites, spriteStageHtml } from "../../cards/sprite-art.js";
 import { saveRun } from "./save.js";
@@ -12,36 +12,44 @@ import { unitLook } from "./data.js";
 import { sfx } from "./sound.js";
 
 const UI = new URL("../../../assets/ui/", import.meta.url).href;
+const RATIONS = new URL("../../../assets/rations/", import.meta.url).href;
 const DRAG_THRESHOLD = 6;
 // Small line icons for the buttons; they take the button's text colour.
 const svg = (body) => `<svg class="gbtn__icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
 const ICON = {
   back: svg('<path d="M14 6l-6 6 6 6"/>'),
-  dice: svg('<rect x="4" y="4" width="16" height="16" rx="3.5"/><circle cx="9" cy="9" r="1.2" fill="currentColor"/><circle cx="15" cy="15" r="1.2" fill="currentColor"/><circle cx="15" cy="9" r="1.2" fill="currentColor"/><circle cx="9" cy="15" r="1.2" fill="currentColor"/>'),
   reserve: svg('<path d="M5 4h14v16l-7-4-7 4z"/>'),
   advance: svg('<path d="M5 6l6 6-6 6"/><path d="M12 6l6 6-6 6"/>'),
 };
 
 /**
  * @param root  element to render into
- * @param ctx   { data, run, rng, opponent, playerName, onBattle(), onQuit() }
+ * @param ctx   { data, run, rng, opponent, playerName, onBattle(), onQuit(), shopRankUp }
+ *              shopRankUp: the new shop rank when the last battle raised it.
  */
 export function mountDeployment(root, ctx) {
   const { data, run, rng } = ctx;
   const { catalog } = data;
-  let selected = null; // { where: "shop" | "line", index }
+  let selected = null; // { where: "shop" | "line" | "ration", index }
   let hovered = null;
   let drag = null;
   let suppressClick = false;
 
-  const unitAt = (ref) => (!ref ? null : ref.where === "shop" ? run.shop[ref.index]?.unit ?? null : run.line[ref.index] ?? null);
+  const unitAt = (ref) => (!ref || ref.where === "ration" ? null : ref.where === "shop" ? run.shop[ref.index]?.unit ?? null : run.line[ref.index] ?? null);
+  const rationAt = (ref) => (ref?.where === "ration" ? run.rations[ref.index] ?? null : null);
+  const itemAt = (ref) => unitAt(ref) ?? rationAt(ref);
+  const itemEl = (ref) => root.querySelector(`.token[data-where="${ref.where}"][data-index="${ref.index}"]`);
+  const rationSrc = (id) => {
+    const img = catalog.rations[id]?.image;
+    return RATIONS + (typeof img === "object" ? img[run.nation] : img);
+  };
   const same = (a, b) => a && b && a.where === b.where && a.index === b.index;
 
   function render() {
     const sel = unitAt(selected);
     const targets = dropTargets(selected);
-    const scouts = run.line.filter((u) => u && catalog.def(u.id)?.scout);
-    const scoutRank = scouts.length ? Math.max(...scouts.map((u) => u.rank)) : null;
+    const report = scouting();
+    const rank = shopRank(catalog, run);
 
     root.innerHTML = `
       <div class="screen deploy" data-nation="${run.nation}">
@@ -59,7 +67,7 @@ export function mountDeployment(root, ctx) {
           </div>
         </header>
 
-        ${scoutRank !== null ? scoutHtml(scoutReport(ctx.opponent, scoutRank)) : ""}
+        ${report ? scoutHtml(report) : ""}
 
         <section class="line" aria-label="Your line, front on the right">
           <div class="line__slots">
@@ -75,13 +83,22 @@ export function mountDeployment(root, ctx) {
           </div>
         </section>
 
+        <section class="rations" aria-label="Rations">
+          <h2 class="rations__title">Rations</h2>
+          <div class="rations__slots">
+            ${run.rations.map((r, i) => rationSlotHtml(i, r)).join("")}
+          </div>
+        </section>
+
         <aside class="card-place" aria-live="polite"></aside>
 
         <footer class="actions">
-          <button type="button" class="gbtn gbtn--roll" data-act="roll" ${run.coin < catalog.rules.rollCost ? "disabled" : ""} aria-label="Roll the shop for ${catalog.rules.rollCost} coin">${ICON.dice}<span>Roll</span>${costHtml(catalog.rules.rollCost)}</button>
+          <button type="button" class="gbtn gbtn--roll" data-act="roll" ${run.coin < catalog.rules.rollCost ? "disabled" : ""} aria-label="Draft new recruits and rations for ${catalog.rules.rollCost} coin. Shop rank ${rank}">
+            <span class="gbtn__stack"><span>Draft Recruits</span><small>Rank: ${rank}</small></span>${costHtml(catalog.rules.rollCost)}
+          </button>
           ${
-            selected?.where === "shop"
-              ? reserveButtonHtml(Boolean(run.shop[selected.index]?.frozen))
+            selected?.where === "shop" || selected?.where === "ration"
+              ? reserveButtonHtml(Boolean((selected.where === "shop" ? run.shop : run.rations)[selected.index]?.frozen))
               : selected?.where === "line"
                 ? `<button type="button" class="gbtn gbtn--sell" data-act="sell" aria-label="Sell for ${1 + Math.floor(sel.rank / 3)} coin"><span>Sell</span>${costHtml(`+${1 + Math.floor(sel.rank / 3)}`)}</button>`
                 : `<span class="actions__hint">${hintText()}</span>`
@@ -98,7 +115,7 @@ export function mountDeployment(root, ctx) {
     return `<span class="gbtn__cost"><img src="${UI}coin.svg" alt="">${amount}</span>`;
   }
 
-  // A held recruit stays in the shop through the next roll and the next turn (Unity's freeze).
+  // A held recruit or ration stays in the shop through the next draft and the next turn (Unity's freeze).
   function reserveButtonHtml(reserved) {
     return reserved
       ? `<button type="button" class="gbtn gbtn--reserve" data-act="freeze" aria-pressed="true" aria-label="Release this recruit from reserve">${ICON.reserve}<span>Release</span></button>`
@@ -107,6 +124,7 @@ export function mountDeployment(root, ctx) {
 
   function hintText() {
     if (run.round === 1 && !run.line.some(Boolean)) return "Drag a recruit onto your line, or click it and then a slot.";
+    if (run.round <= 2) return "Feed rations to your deployed units, and merge copies of a unit to rank it up.";
     return "Merge copies of a unit to rank it up.";
   }
 
@@ -121,9 +139,51 @@ export function mountDeployment(root, ctx) {
       </div>`;
   }
 
+  function rationSlotHtml(index, slot) {
+    const isSelected = same(selected, { where: "ration", index });
+    const r = slot && catalog.rations[slot.id];
+    const label = r ? `${r.name}, costs ${catalog.rules.rationCost}${slot.frozen ? ", in reserve" : ""}. ${r.text}` : "";
+    return `
+      <div class="slot slot--ration" data-where="ration" data-index="${index}" role="group" aria-label="Ration slot ${index + 1}">
+        ${
+          r
+            ? `<button type="button" class="token token--ration${isSelected ? " is-selected" : ""}${slot.frozen ? " is-frozen" : ""}" data-where="ration" data-index="${index}" aria-label="${escapeHtml(label)}" aria-pressed="${isSelected}">
+                <span class="token__figure"><img src="${rationSrc(slot.id)}" alt=""></span>
+                <span class="token__cost"><img src="${UI}coin.svg" alt="">${catalog.rules.rationCost}</span>
+              </button>`
+            : ""
+        }
+      </div>`;
+  }
+
+  // What the scouts and telescopes reveal: scouts show enemy units up to their
+  // rank; a telescope on a scout shows every unit with its numbers, and one on
+  // a line unit shows the enemy front unit with its numbers. Null when nothing does.
+  function scouting() {
+    const army = run.line.filter(Boolean);
+    const scouts = army.filter((u) => catalog.def(u.id)?.scout);
+    const scoutRank = scouts.length ? Math.max(...scouts.map((u) => u.rank)) : null;
+    const seeAll = scouts.some((u) => u.telescope);
+    const seeFront = army.some((u) => u.telescope && !catalog.def(u.id)?.scout && u.type !== "artillery");
+    if (scoutRank === null && !seeFront) return null;
+    return (ctx.opponent?.units ?? []).slice(0, 5).map((u, i) => {
+      const numbers = seeAll || (seeFront && i === 0);
+      if (!numbers && (scoutRank === null || u.rank > scoutRank)) return { known: false };
+      return { known: true, id: u.id, rank: u.rank, attack: numbers ? u.attack : null, health: numbers ? u.health : null };
+    });
+  }
+
   // Deployment.SetDeployMarkerArrows: where the selected unit can go.
   function dropTargets(src) {
     const map = new Map();
+    if (src?.where === "ration") {
+      const slot = rationAt(src);
+      if (!slot || run.coin < catalog.rules.rationCost) return map;
+      run.line.forEach((target, i) => {
+        if (target && !rationRefusal(catalog, run, slot.id, target)) map.set(i, "drop");
+      });
+      return map;
+    }
     const unit = unitAt(src);
     if (!unit) return map;
     const hasGap = run.line.some((u) => !u);
@@ -142,7 +202,9 @@ export function mountDeployment(root, ctx) {
       if (!s.known) return `<li title="Outranks your scout"><img src="${UI}scout_question_mark.svg" alt="Unknown unit"></li>`;
       const look = unitLook(data, { id: s.id, kind: "" });
       const art = look.artLayers.length ? spriteStageHtml(layoutSprites(look.artLayers, { maxW: 4.2, maxH: 4.2 }), "scout__stage") : "";
-      return `<li title="${escapeHtml(look.name)}, rank ${s.rank}">${art}<span class="scout__rank">${s.rank}</span></li>`;
+      const shown = s.attack !== null && s.attack !== undefined;
+      const numbers = shown ? `<span class="scout__numbers">${s.attack}/${s.health}</span>` : "";
+      return `<li title="${escapeHtml(look.name)}, rank ${s.rank}${shown ? `, ${s.attack} attack, ${s.health} health` : ""}">${art}<span class="scout__rank">${s.rank}</span>${numbers}</li>`;
     });
     return `
       <section class="scout" aria-label="Scout report">
@@ -158,6 +220,11 @@ export function mountDeployment(root, ctx) {
     const unit = unitAt(ref);
     const look = unit && unitLook(data, unit);
     place.replaceChildren();
+    const ration = rationAt(ref);
+    if (ration) {
+      place.innerHTML = rationCardHtml(ration.id);
+      return;
+    }
     if (!look?.card) {
       const verb = matchMedia("(hover: none)").matches ? "Tap" : "Hover over";
       place.innerHTML = `<p class="card-place__hint">${verb} a unit to see its card.</p>`;
@@ -165,6 +232,23 @@ export function mountDeployment(root, ctx) {
     }
     const card = createUnitCard(look.card, { roster: look.roster, rations: data.rations, rank: Math.min(unit.rank, look.card.maxRank) });
     place.append(card);
+  }
+
+  function rationCardHtml(id) {
+    const r = catalog.rations[id];
+    const only = r.nation ? `<p class="rcard__only">${escapeHtml(catalog.nations[r.nation].rosterName)} only</p>` : "";
+    return `
+      <article class="rcard">
+        <header class="rcard__head">
+          <span class="rcard__cost"><img src="${UI}coin.svg" alt="">${catalog.rules.rationCost}</span>
+          <h3>${escapeHtml(r.name)}</h3>
+          <span class="rcard__rank" title="In the shop from shop rank ${r.shopRank}">Rank ${r.shopRank}</span>
+        </header>
+        <img class="rcard__art" src="${rationSrc(id)}" alt="">
+        <p class="rcard__text">${escapeHtml(r.text)}</p>
+        ${only}
+        <p class="rcard__how">A ration: place it on a deployed unit.</p>
+      </article>`;
   }
 
   function act(result) {
@@ -181,14 +265,19 @@ export function mountDeployment(root, ctx) {
         sfx("rankUp");
         floatAtUid(e.uid, `Rank ${e.rank}!`);
       }
+      if (e.type === "note") floatAtUid(e.uid, e.text);
+      if (e.type === "shopRank") announceShopRank(e.rank);
+      if (e.type === "drums") sfx("bugle");
     }
+    if (result.action === "ration") sfx("rankUp");
     if (result.action === "sell") floatAt(root.querySelector('[data-act="roll"]'), `+${1 + Math.floor(result.unit.rank / 3)} coin`);
     return true;
   }
 
   function drop(src, dst) {
     if (!src || !dst || dst.where !== "line") return;
-    if (src.where === "shop") act(buy(catalog, run, src.index, dst.index));
+    if (src.where === "ration") act(buyRation(catalog, run, src.index, dst.index, rng));
+    else if (src.where === "shop") act(buy(catalog, run, src.index, dst.index));
     else act(move(catalog, run, src.index, dst.index));
   }
 
@@ -198,7 +287,7 @@ export function mountDeployment(root, ctx) {
       render();
     } else if (selected && ref.where === "line") {
       drop(selected, ref);
-    } else if (unitAt(ref)) {
+    } else if (itemAt(ref)) {
       selected = ref;
       render();
       focusRef(ref);
@@ -206,7 +295,7 @@ export function mountDeployment(root, ctx) {
   }
 
   function focusRef(ref) {
-    root.querySelector(`.token[data-where="${ref.where}"][data-index="${ref.index}"]`)?.focus();
+    itemEl(ref)?.focus();
   }
 
   // Input ---------------------------------------------------------------
@@ -262,7 +351,7 @@ export function mountDeployment(root, ctx) {
       drag.active = true;
       selected = drag.ref;
       render();
-      const src = root.querySelector(`.token[data-where="${drag.ref.where}"][data-index="${drag.ref.index}"]`);
+      const src = itemEl(drag.ref);
       const box = src.getBoundingClientRect();
       drag.ghost = src.cloneNode(true);
       drag.ghost.classList.add("token--ghost");
@@ -317,6 +406,7 @@ export function mountDeployment(root, ctx) {
       return;
     }
     if (name === "freeze" && selected?.where === "shop") return act(toggleFreeze(run, selected.index));
+    if (name === "freeze" && selected?.where === "ration") return act(toggleRationFreeze(run, selected.index));
     if (name === "sell" && selected?.where === "line") return act(sell(run, selected.index));
     if (name === "quit") return ctx.onQuit();
     if (name === "battle") {
@@ -333,10 +423,21 @@ export function mountDeployment(root, ctx) {
 
   // Feedback --------------------------------------------------------------
 
-  function toast(text) {
+  // A new shop rank: a fanfare, and what it brings into the shop.
+  function announceShopRank(rank) {
+    const units = catalog.nations[run.nation].roster.filter((id) => catalog.def(id).tier === rank).map((id) => unitLook(data, { id, kind: "" }).name);
+    const rations = Object.values(catalog.rations).filter((r) => r.shopRank === rank && (!r.nation || r.nation === run.nation)).map((r) => r.name);
+    const news = [...units, ...rations];
+    sfx("rankUp");
+    floatAt(root.querySelector('[data-act="roll"]'), `Shop rank ${rank}!`);
+    toast(`Shop rank ${rank}${news.length ? `: ${news.join(", ")} now in the shop` : ""}`, 6);
+  }
+
+  function toast(text, seconds = 2.6) {
     const el = root.querySelector(".toast");
     if (!el) return;
     el.textContent = text;
+    el.style.animationDuration = `${seconds}s`;
     el.classList.remove("is-on");
     void el.offsetWidth;
     el.classList.add("is-on");
@@ -361,6 +462,7 @@ export function mountDeployment(root, ctx) {
   }
 
   render();
+  if (ctx.shopRankUp) announceShopRank(ctx.shopRankUp);
   return {
     destroy() {
       cancelDrag();

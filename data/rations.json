@@ -1,0 +1,18 @@
+{
+  "_about": "Rations sold beside the recruits (designed in supplies/rations.csv). Each is placed on a deployed unit. 'shopRank' is the shop rank that first offers it; 'nation' limits it to one side; 'image' is under assets/rations/ (a nation-keyed object when each side has its own picture). The effects are in src/game/engine/rations.js.",
+  "rations": {
+    "bread": { "name": "Bread", "shopRank": 1, "image": "bread.webp", "text": "+1/+1." },
+    "cheese": { "name": "Cheese", "shopRank": 1, "image": "cheese.webp", "text": "+2 health." },
+    "wine": { "name": "Wine", "shopRank": 1, "image": "wine.webp", "text": "+1/+1 for this battalion's skirmishers." },
+    "onion": { "name": "Onion", "nation": "france", "shopRank": 1, "image": "onion.webp", "text": "+1/+1 for this battalion's grenadiers." },
+    "vegetables": { "name": "Vegetables", "shopRank": 2, "image": "vegetables.webp", "text": "+2/+2." },
+    "spirits": { "name": "Spirits", "shopRank": 2, "image": "spirits.webp", "text": "+3/+3 for the next battle only." },
+    "hay": { "name": "Hay", "shopRank": 2, "image": "hay.webp", "text": "+1/+1 for all your cavalry." },
+    "telescope": { "name": "Telescope", "shopRank": 2, "image": "telescope.webp", "text": "On a scout: the scout report shows every enemy unit with its numbers. On artillery: +1/+1. On anything else: the scout report shows the enemy's front unit with its numbers. One per unit." },
+    "drums": { "name": "Drums", "shopRank": 2, "image": "drums.webp", "text": "Clears the recruits and drafts three of this unit in their place." },
+    "colors": { "name": "Colors", "shopRank": 2, "image": { "france": "colors-france.webp", "britain": "colors-britain.webp" }, "text": "The shop goes up one rank for the rest of the campaign." },
+    "bacon": { "name": "Bacon", "nation": "britain", "shopRank": 3, "image": "bacon.webp", "text": "+3/+3 for all your infantry." },
+    "claymore": { "name": "Claymore Sword", "nation": "britain", "shopRank": 3, "image": "claymore.webp", "text": "Doubles the attack of infantry or cavalry, and the health too of the Scots (Highlanders and Scots Greys). On artillery: +1/+1." },
+    "eagle": { "name": "Eagle", "nation": "france", "shopRank": 4, "image": "eagle.webp", "text": "Doubles this unit's attack and health." }
+  }
+}

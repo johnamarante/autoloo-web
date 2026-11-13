@@ -86,8 +86,8 @@ function headerHtml(unit) {
         <h3>${esc(unit.displayName)}</h3>
         <p>${esc(subtitle)}</p>
       </div>
-      <div class="ucard__tier" title="Tier ${unit.tier}: appears in the shop from round ${unit.tier}${unit.tierSource === "guess" ? " (provisional)" : ""}">
-        <small>Tier</small><span>${ROMAN[unit.tier] ?? unit.tier}</span>
+      <div class="ucard__tier" title="Shop rank ${unit.tier}: in the shop ${unit.shopWins ? `from ${unit.shopWins} wins` : "from the start"}${unit.tierSource === "guess" ? " (provisional)" : ""}">
+        <small>Shop</small><span>${ROMAN[unit.tier] ?? unit.tier}</span>
       </div>
     </header>`;
 }

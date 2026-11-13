@@ -56,7 +56,7 @@ function buildUnit(nation, meta, rowsByName, sprites, game) {
   // Units in the game take their numbers from units.json (the Unity prefabs);
   // units still in development fall back to the CSV.
   const stats = g
-    ? { attack: g.attack, health: g.health, maxRank: g.maxRank, chance: g.chance, tier: g.tier, cost: g.cost, maxAllowed: null }
+    ? { attack: g.attack, health: g.health, maxRank: g.maxRank, chance: g.chance, tier: g.tier, shopWins: game.nations[nation]?.shopRankWins?.[g.tier - 1] ?? null, cost: g.cost, maxAllowed: null }
     : {
         attack: toInt(row.Attack),
         health: toInt(row.Health),

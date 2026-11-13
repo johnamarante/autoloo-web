@@ -2,7 +2,7 @@
 // Opponents are armies other players drafted, read from the store (see
 // net/config.js); signed-in players post theirs back at the end of each turn.
 import { createRng } from "../engine/rng.js";
-import { applyBattleResult, createRun } from "../engine/run.js";
+import { applyBattleResult, createRun, shopRank } from "../engine/run.js";
 import { simulateBattle } from "../engine/battle.js";
 import { createStore, storageMode } from "../net/config.js";
 import { authConfigured, currentSession, loginWithPassword, logout, resetPassword, signUp } from "../net/auth.js";
@@ -26,6 +26,7 @@ let data;
 let screen;
 let run;
 let opponent;
+let shopRankUp = null; // set when the last battle raised the shop rank
 
 function show(mount, ctx) {
   screen?.destroy();
@@ -76,14 +77,15 @@ async function deployment() {
   // Unity drops the menu music once a side is chosen; deployment has only the distant battle.
   music(null);
   ambience("deployment");
-  opponent = await findOpponent(store, data.catalog, run.nation, run.round, rng);
-  show(mountDeployment, { data, run, rng, opponent, playerName: player.name, onBattle: battle, onQuit: menu });
+  opponent = await findOpponent(store, data.catalog, run.nation, run.round, rng, shopRank(data.catalog, run));
+  show(mountDeployment, { data, run, rng, opponent, playerName: player.name, onBattle: battle, onQuit: menu, shopRankUp });
+  shopRankUp = null;
   sfx("bugle"); // a fresh shop each turn, as Deployment draws one
 }
 
 function battle() {
   // Deployment.cs stores the army as the battle starts; both writes run in the background.
-  savePlayerRecord(store, run, player);
+  savePlayerRecord(store, run, player, data.catalog);
   postDraft(store, data.catalog, run, player);
   // The line itself is not changed by the battle, like Unity restoring the army from UnitDetails.
   const army = run.line.filter(Boolean);
@@ -94,10 +96,10 @@ function battle() {
 }
 
 function report(army, result) {
-  applyBattleResult(data.catalog, run, result, rng);
+  shopRankUp = applyBattleResult(data.catalog, run, result, rng).shopRankUp ?? null;
   if (run.status === "playing") saveRun(run, player.name);
   else clearSave();
-  savePlayerRecord(store, run, player);
+  savePlayerRecord(store, run, player, data.catalog);
   show(mountReport, {
     data,
     run,

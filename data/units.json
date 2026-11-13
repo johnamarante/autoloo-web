@@ -10,13 +10,17 @@
     "winsToVictory": 10,
     "squareAttackBonus": 3,
     "canisterAttackBonus": 3,
-    "draftRoundCap": 3
+    "draftRoundCap": 3,
+    "rationSlots": 2,
+    "rationCost": 3
   },
   "nations": {
     "france": {
       "prefix": "french",
       "draftCode": "fr",
       "rosterName": "France",
+      "_shopRankWins": "Wins needed for each shop rank: rank 1 at 0 wins, rank 2 at 2, and so on. A unit is in the shop once the shop rank reaches its tier.",
+      "shopRankWins": [0, 2, 4, 6],
       "enemy": "britain",
       "roster": [
         "french_line",
@@ -33,6 +37,7 @@
       "prefix": "british",
       "draftCode": "br",
       "rosterName": "Britain",
+      "shopRankWins": [0, 2, 4],
       "enemy": "france",
       "roster": [
         "british_foot",
@@ -65,12 +70,12 @@
     },
     "french_lancer": {
       "kind": "lancer", "nation": "france", "type": "cavalry",
-      "attack": 6, "health": 3, "maxRank": 9, "tier": 1, "cost": 3, "chance": 5,
+      "attack": 6, "health": 3, "maxRank": 9, "tier": 2, "cost": 3, "chance": 5,
       "winBuff": "minor", "swarm": true
     },
     "french_cuirassier": {
       "kind": "cuirassier", "nation": "france", "type": "cavalry",
-      "attack": 6, "health": 6, "maxRank": 9, "tier": 1, "cost": 3, "chance": 5,
+      "attack": 6, "health": 6, "maxRank": 9, "tier": 2, "cost": 3, "chance": 5,
       "winBuff": "major"
     },
     "french_heavyartillery": {
@@ -85,7 +90,7 @@
     },
     "french_oldguardgrenadier": {
       "kind": "imperialguardgrenadier", "nation": "france", "type": "infantry", "formsSquare": true,
-      "attack": 6, "health": 8, "maxRank": 9, "tier": 3, "cost": 3, "chance": 10,
+      "attack": 6, "health": 8, "maxRank": 9, "tier": 4, "cost": 3, "chance": 10,
       "cycleBoostInfantry": { "attack": 0, "health": 1, "designed": true }
     },
     "british_foot": {

@@ -169,6 +169,21 @@ h2 {
 
 .gbtn--roll {
   --plate: #3d4a8f;
+  height: 2.7em;
+  font-size: 1.8em;
+}
+
+/* "Draft Recruits" over the shop rank. */
+.gbtn__stack {
+  display: grid;
+  justify-items: start;
+  line-height: 1.05;
+}
+
+.gbtn__stack small {
+  font: 700 0.7em "Source Sans 3", sans-serif;
+  letter-spacing: 0.04em;
+  opacity: 0.9;
 }
 
 .gbtn--reserve {
@@ -324,8 +339,62 @@ h2 {
 }
 
 .shop__sign {
-  width: 13em;
+  width: 10em;
   align-self: center;
+}
+
+/* Rations: to the right of the recruits, smaller than a unit. */
+.rations {
+  position: absolute;
+  top: 33.2em;
+  left: 54em;
+  display: grid;
+  justify-items: center;
+  gap: 0.3em;
+}
+
+.rations__title {
+  margin: 0;
+  font-size: 1.6em;
+  color: var(--ink-soft);
+}
+
+.rations__slots {
+  display: flex;
+  gap: 0.8em;
+}
+
+.slot.slot--ration {
+  width: 7.6em;
+  height: 9.6em;
+  border: 0.15em dashed rgba(93, 77, 59, 0.25);
+}
+
+.token.token--ration {
+  width: 100%;
+  height: 100%;
+}
+
+.token--ration .token__figure {
+  inset: 1.6em 0.5em 1.2em;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s ease;
+}
+
+.token--ration .token__figure img {
+  max-width: 100%;
+  max-height: 100%;
+  filter: drop-shadow(0 0.2em 0.15em rgba(42, 32, 23, 0.3));
+}
+
+.token--ration .token__cost {
+  font-size: 1.3em;
+}
+
+.token--ration.is-frozen::after {
+  font-size: 0.85em;
+  bottom: -1.3em;
 }
 
 .slot {
@@ -684,6 +753,82 @@ h2 {
 
 .scout li > img {
   width: 2.6em;
+}
+
+/* Numbers a telescope reveals. */
+.scout__numbers {
+  position: absolute;
+  left: 0.2em;
+  top: 0.05em;
+  font: 1em "Alfa Slab One", Georgia, serif;
+  color: var(--hp);
+}
+
+/* The card for a ration, in the card column. */
+.rcard {
+  width: 100%;
+  margin: auto 0;
+  padding: 1.4em 1.6em;
+  border: 0.25em solid var(--ink);
+  border-radius: 1.2em;
+  background: #fffdf2;
+  box-shadow: 0 0.4em 0 var(--ink);
+  text-align: center;
+}
+
+.rcard__head {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+}
+
+.rcard__head h3 {
+  flex: 1;
+  margin: 0;
+  font: 400 2.3em "Alfa Slab One", Georgia, serif;
+}
+
+.rcard__cost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15em;
+  font: 1.8em "Alfa Slab One", Georgia, serif;
+}
+
+.rcard__cost img {
+  width: 1.2em;
+}
+
+.rcard__rank {
+  padding: 0.15em 0.6em;
+  border-radius: 99em;
+  font: 700 1.2em "Source Sans 3", sans-serif;
+  color: #fff;
+  background: #3d4a8f;
+}
+
+.rcard__art {
+  display: block;
+  width: 60%;
+  max-height: 14em;
+  margin: 1em auto;
+  object-fit: contain;
+}
+
+.rcard p {
+  margin: 0.4em 0 0;
+  font-size: 1.55em;
+  line-height: 1.35;
+}
+
+.rcard .rcard__only {
+  font-weight: 700;
+  color: var(--hp);
+}
+
+.rcard .rcard__how {
+  font-size: 1.3em;
+  color: var(--ink-soft);
 }
 
 .scout__rank {

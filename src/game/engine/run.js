@@ -2,11 +2,16 @@
 // Deployment.cs (shop, roll, freeze, sell, end turn) and the drop and merge
 // rules in Unit.OnMouseDown / Deployment.TrySnapToDeploymentQueueSpace.
 import { canMerge, createUnit, fromUnitDetail, rankRefund, sellValue, toUnitDetail } from "./units.js";
+import { applyRation, endSpirits, rationPool, rationRefusal, shopRank } from "./rations.js";
+
+export { shopRank };
 
 /**
  * State shape:
  *   line[0..4]  deployed units, index 0 is the front (Unity queue position -1)
  *   shop[0..2]  { unit, frozen } or null
+ *   rations[0..1]  { id, frozen } or null
+ *   colors      how many Colors raised the shop rank
  */
 export function createRun(catalog, nation, rng, saved = null) {
   const rules = catalog.rules;
@@ -18,10 +23,15 @@ export function createRun(catalog, nation, rng, saved = null) {
     losses: 0,
     line: Array(rules.lineSlots).fill(null),
     shop: Array(rules.shopSlots).fill(null),
+    rations: Array(rules.rationSlots ?? 0).fill(null),
+    colors: 0,
     status: "playing",
   };
   if (saved) {
-    Object.assign(run, { round: saved.round, coin: saved.coin, wins: saved.wins, losses: saved.losses });
+    Object.assign(run, { round: saved.round, coin: saved.coin, wins: saved.wins, losses: saved.losses, colors: Number(saved.colors) || 0 });
+    (saved.RationQueue ?? []).forEach((id, i) => {
+      if (catalog.rations[id] && i < run.rations.length) run.rations[i] = { id, frozen: true };
+    });
     for (const d of saved.UnitDetails ?? []) {
       const u = fromUnitDetail(catalog, nation, d);
       if (u && d.QueuePosition >= 1 && d.QueuePosition <= rules.lineSlots) run.line[d.QueuePosition - 1] = u;
@@ -37,11 +47,12 @@ export function createRun(catalog, nation, rng, saved = null) {
   return run;
 }
 
-/** Units the shop can offer this round: tier at most the round, weighted by Chance. */
+/** Units the shop can offer: tier at most the shop rank, weighted by Chance. */
 export function shopPool(catalog, run) {
+  const rank = shopRank(catalog, run);
   return catalog.nations[run.nation].roster
     .map((id) => ({ id, def: catalog.def(id) }))
-    .filter(({ def }) => def.tier <= run.round && def.chance > 0);
+    .filter(({ def }) => def.tier <= rank && def.chance > 0);
 }
 
 function fillShop(catalog, run, rng) {
@@ -56,11 +67,18 @@ function fillShop(catalog, run, rng) {
     }
     return null;
   });
+  fillRations(catalog, run, rng);
+}
+
+// Rations come up evenly from what the shop rank offers; held ones stay.
+function fillRations(catalog, run, rng) {
+  const pool = rationPool(catalog, run);
+  run.rations = run.rations.map((slot) => (slot?.frozen ? slot : pool.length ? { id: pool[rng.int(pool.length)], frozen: false } : null));
 }
 
 export function roll(catalog, run, rng, { paid = true } = {}) {
   if (paid) {
-    if (run.coin < catalog.rules.rollCost) return fail("Not enough coin to roll");
+    if (run.coin < catalog.rules.rollCost) return fail("Not enough coin to draft recruits");
     run.coin -= catalog.rules.rollCost;
   }
   fillShop(catalog, run, rng);
@@ -72,6 +90,31 @@ export function toggleFreeze(run, shopIndex) {
   if (!slot) return fail("Empty shop slot");
   slot.frozen = !slot.frozen;
   return ok(slot.frozen ? "freeze" : "unfreeze");
+}
+
+export function toggleRationFreeze(run, rationIndex) {
+  const slot = run.rations[rationIndex];
+  if (!slot) return fail("Empty ration slot");
+  slot.frozen = !slot.frozen;
+  return ok(slot.frozen ? "freeze" : "unfreeze");
+}
+
+/** Places a ration from the shop on a deployed unit. */
+export function buyRation(catalog, run, rationIndex, lineIndex, rng) {
+  const slot = run.rations[rationIndex];
+  if (!slot) return fail("Empty ration slot");
+  const unit = run.line[lineIndex];
+  if (!unit) return fail("Place rations on a deployed unit");
+  const cost = catalog.rules.rationCost;
+  if (run.coin < cost) return fail("Not enough coin");
+  const refusal = rationRefusal(catalog, run, slot.id, unit);
+  if (refusal) return fail(refusal);
+  run.coin -= cost;
+  run.rations[rationIndex] = null;
+  const events = applyRation(catalog, run, slot.id, unit, rng);
+  // A higher shop rank shows at once in the rations still on offer.
+  if (slot.id === "colors") fillRations(catalog, run, rng);
+  return ok("ration", { unit, ration: slot.id, events });
 }
 
 /** Drops a shop unit on a line slot: place, merge, or insert with a shift. */
@@ -139,7 +182,15 @@ export function shopDetails(run) {
   return run.shop.flatMap((s) => (s?.frozen ? [toUnitDetail(s.unit, 0)] : []));
 }
 
+/** Held rations carry over too. */
+export function rationDetails(run) {
+  return run.rations.flatMap((s) => (s?.frozen ? [s.id] : []));
+}
+
+/** Returns the new shop rank when this result raised it. */
 export function applyBattleResult(catalog, run, result, rng) {
+  const rankBefore = shopRank(catalog, run);
+  endSpirits(run);
   if (result === "win") run.wins++;
   if (result === "loss") run.losses++;
   if (run.losses >= catalog.rules.hearts) run.status = "defeat";
@@ -147,6 +198,8 @@ export function applyBattleResult(catalog, run, result, rng) {
   run.round++;
   run.coin = catalog.rules.startingCoin;
   fillShop(catalog, run, rng);
+  const rank = shopRank(catalog, run);
+  return rank > rankBefore ? { shopRankUp: rank } : {};
 }
 
 export function heartsLeft(catalog, run) {
@@ -159,6 +212,10 @@ function rankUp(catalog, run, target, consumed) {
   target.rank++;
   target.attack++;
   target.health++;
+  // Rations the consumed unit carried are not lost.
+  target.skirmishBonus = (target.skirmishBonus ?? 0) + (consumed.skirmishBonus ?? 0) || undefined;
+  target.grenadierBonus = (target.grenadierBonus ?? 0) + (consumed.grenadierBonus ?? 0) || undefined;
+  target.telescope = target.telescope || consumed.telescope || undefined;
   run.coin += rankRefund(consumed.rank);
   const events = [{ type: "rankUp", uid: target.uid, rank: target.rank }];
   if (catalog.def(target.id).scout) events.push({ type: "scout", uid: target.uid, rank: target.rank });
