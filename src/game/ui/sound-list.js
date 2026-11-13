@@ -17,6 +17,8 @@ export const SOUNDS = {
   musket: { files: ["musket-volley.mp3"] }, // CombatEffect gunfire, infantry at the front
   sabre: { files: ["cavalry-attack.mp3"] }, // CombatEffect, cavalry at the front
   rifle: { files: ["rifle.mp3"] },
+  charge_france: { files: ["charge-france.mp3"] }, // cavalry grows after winning at the front (Chargef.wav)
+  charge_britain: { files: ["charge-britain.mp3"] }, // (Chargeb.wav)
   rockets: { files: cannonFire, volume: 0.7 },
   square_france: { files: ["square-france.mp3"] }, // Unit forming square
   square_britain: { files: ["square-britain.mp3"] },

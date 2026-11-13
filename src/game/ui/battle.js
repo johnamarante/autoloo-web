@@ -353,6 +353,7 @@ export function mountBattle(root, ctx) {
     },
     async buff(e) {
       setStat(e.stat);
+      if (e.reason === "winBuff") sound(`charge_${nationOf[units.get(e.uid)?.side ?? "left"]}`);
       floatText(e.uid, `+${e.attack}/+${e.health}`, "good");
       await wait(e.reason === "winBuff" ? 380 : 160);
     },
