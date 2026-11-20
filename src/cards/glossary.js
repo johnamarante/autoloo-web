@@ -30,7 +30,8 @@ export const KEYWORDS = {
   "Rocket Barrage": "Congreve rockets strike several enemy units at once, but need distance to launch.",
   "Rifle Tactics": "Riflemen shoot from second place in line, so another unit can take the hits in front.",
   Regroup: "When this unit falls, survivors from the same nation absorb its veterans.",
-  "United Netherlands": "Buy the Belgian and Dutch lines together in one turn to get the second one free.",
+  "United Netherlands": "The Belgian and Dutch lines are drafted together. Buy one and the other is free for the rest of that turn.",
+  Jägers: "Riflemen who fall in behind their battalion when it reaches the front, if the line has room, and shoot from second place.",
   Square: "When charged by cavalry, this infantry forms square: +3 attack, and it takes only 1 damage per cavalry attack. Units that only just reached the front mid-battle have no time to form one. Artillery deals double damage to a square.",
   Rank: "Merge a duplicate of this unit onto it to rank up. Each rank adds +1 attack and +1 health and can unlock companies.",
 };

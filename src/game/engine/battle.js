@@ -32,6 +32,7 @@ export function simulateBattle(catalog, left, right) {
     log({ type: "cycle", n: b.roundCycle });
     cycleBuffs(b);
     skirmishCheck(b);
+    riflemenCheck(b);
     squareChecks(b);
     artilleryPhase(b);
     let result = grenadiersAndCleanup(b);
@@ -52,8 +53,9 @@ function enter(u) {
   return { ...u, attackBonus: 0, cycle: 1, squared: false, skirmishReady: false, grenadiersReady: false };
 }
 
+// A battalion's definition, or a company's (the Brunswick jägers carry their own rifle tactics).
 function def(b, u) {
-  return b.catalog.units[u.id] ?? {};
+  return b.catalog.units[u.id] ?? b.catalog.companies[u.id] ?? {};
 }
 
 function snapshot(u) {
@@ -85,6 +87,7 @@ function initAbilities(b) {
       const d = def(b, u);
       u.skirmishReady = !!d.skirmish && u.rank >= d.skirmish.unlockRank;
       u.grenadiersReady = !!d.grenadiers && u.rank >= d.grenadiers.unlockRank;
+      u.riflemenReady = !!d.riflemen && u.rank >= d.riflemen.unlockRank;
     }
   }
 }
@@ -284,6 +287,21 @@ function onDie(b, side, u) {
   opp.health += n;
   opp.attackBonus += n;
   b.events.push({ type: "buff", uid: opp.uid, attack: n, health: n, reason: "winBuff", stat: shown(opp) });
+}
+
+// Designed ability (Brunswick jägers): when the battalion is at the front and
+// the line has room, its riflemen fall in right behind it, where they shoot
+// like the Rifles. They wait for room as long as the battalion holds the front.
+function riflemenCheck(b) {
+  for (const side of ["left", "right"]) {
+    const u = front(b, side);
+    if (!u?.riflemenReady || b.sides[side].length >= b.rules.lineSlots) continue;
+    u.riflemenReady = false;
+    const company = enter(createCompany(b.catalog, def(b, u).riflemen.company, u, { skirmisher: false }));
+    b.sides[side].splice(1, 0, company);
+    b.events.push({ type: "spawn", side, reason: "riflemen", from: u.uid, unit: snapshot(company) });
+    arrange(b);
+  }
 }
 
 // GrenadiersCheck then PostCycleCleanup, then CheckForAndHandleBattleResult.

@@ -14,6 +14,7 @@ export function saveRun(run, playerName = "guest") {
     losses: run.losses,
     coin: run.coin,
     colors: run.colors ?? 0,
+    freeUnit: run.freeUnit ?? null,
     UnitDetails: armyDetails(run),
     ShopQueue: shopDetails(run),
     RationQueue: rationDetails(run),

@@ -10,7 +10,7 @@ const HEART = new URL("../../../assets/icons/icon_heart.svg", import.meta.url).h
 // Token geometry in em; the French line infantryman stands 8em tall.
 const TOKEN = { emPerUnit: 8 / 10.43, maxW: 10.4, maxH: 9 };
 
-export function tokenHtml(data, unit, { where, index, selected = false, frozen = false, facing = "right" } = {}) {
+export function tokenHtml(data, unit, { where, index, selected = false, frozen = false, facing = "right", price = unit.cost } = {}) {
   const look = unitLook(data, unit);
   // A card can let its art stand taller than other units' (the rocket trooper and his pole).
   const art = look.artLayers.length
@@ -21,13 +21,13 @@ export function tokenHtml(data, unit, { where, index, selected = false, frozen =
   const badges = companyBadges(def, unit);
   const label = `${look.name}, ${unit.attack} attack with ${WEAPONS[weapon].label.toLowerCase()}, ${unit.health} health, rank ${unit.rank}${
     badges.length ? `, ${badges.map((b) => (b === "skirmisher" ? "skirmishers" : "grenadiers")).join(" and ")} attached` : ""
-  }${where === "shop" ? `, costs ${unit.cost}${frozen ? ", in reserve" : ""}` : ""}`;
+  }${where === "shop" ? `, ${price === 0 ? "free this turn" : `costs ${price}`}${frozen ? ", in reserve" : ""}` : ""}`;
   return `
     <button type="button" class="token${selected ? " is-selected" : ""}${frozen ? " is-frozen" : ""}" data-facing="${facing}"
       data-where="${where}" data-index="${index}" data-uid="${unit.uid}" aria-label="${escapeHtml(label)}" aria-pressed="${selected}">
       <span class="token__figure">${art}</span>
       ${where !== "enemy" ? `<img class="token__rank" src="${UI}rank/${Math.min(unit.rank, 9)}.svg" alt="">` : ""}
-      ${where === "shop" ? `<span class="token__cost"><img src="${UI}coin.svg" alt="">${unit.cost}</span>` : ""}
+      ${where === "shop" ? (price === 0 ? `<span class="token__cost token__cost--free">Free</span>` : `<span class="token__cost"><img src="${UI}coin.svg" alt="">${price}</span>`) : ""}
       ${
         badges.length
           ? `<span class="token__badges">${badges
@@ -49,6 +49,7 @@ function companyBadges(def, unit) {
   if (own) return [own];
   const out = [];
   if (def?.skirmish && unit.rank >= def.skirmish.unlockRank) out.push("skirmisher");
+  if (def?.riflemen && unit.rank >= def.riflemen.unlockRank) out.push("skirmisher");
   if (def?.grenadiers && unit.rank >= def.grenadiers.unlockRank) out.push("grenadier");
   return out;
 }

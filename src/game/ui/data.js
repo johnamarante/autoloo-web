@@ -19,7 +19,7 @@ export async function loadGameData() {
   for (const [id, def] of Object.entries(catalog.units)) {
     const card = cards.get(id)?.card;
     if (!card) continue;
-    for (const [rule, kind] of [["skirmish", "skirmisher"], ["grenadiers", "grenadier"]]) {
+    for (const [rule, kind] of [["skirmish", "skirmisher"], ["riflemen", "skirmisher"], ["grenadiers", "grenadier"]]) {
       const att = def[rule] && card.attachments.find((a) => a.kind === kind);
       if (att) companies.set(def[rule].company, { name: att.displayName, artLayers: att.artLayers });
     }

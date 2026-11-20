@@ -127,16 +127,17 @@
         },
         {
           "id": "fr-carabinier-cheval",
+          "unitId": "french_carabineracheval",
           "csvName": "Carabiners a cheval",
           "displayName": "Carabiniers à Cheval",
           "role": "Heavy Cavalry",
           "type": "cavalry",
-          "tier": 2,
-          "tierSource": "guess",
+          "tier": 3,
+          "tierSource": "design",
           "cost": 3,
           "sprite": "france/french_carabineracheval_left_0_2_.svg",
           "abilities": [
-            { "trigger": "deploy", "keyword": "Rally", "text": "All your other cavalry gain +1/+1." },
+            { "trigger": "deploy", "keyword": "Rally", "text": "All your other cavalry gain +1/+1. Only one may serve in your army." },
             { "trigger": "kill", "keyword": "Win Buff", "text": "Gain +{R+1}/+{R+1}." }
           ]
         },
@@ -265,14 +266,15 @@
         },
         {
           "id": "gb-brunswick-line",
+          "unitId": "british_brunswickline",
           "csvName": "Brunswicker Line",
           "displayName": "Brunswick Line",
           "role": "Line Infantry",
           "contingent": "Brunswick",
           "type": "infantry",
           "formsSquare": true,
-          "tier": 1,
-          "tierSource": "guess",
+          "tier": 2,
+          "tierSource": "design",
           "cost": 3,
           "sprite": "britain/british_brunswickline_left.svg",
           "abilities": [],
@@ -289,13 +291,13 @@
             },
             {
               "csvName": "Advance Guard",
-              "displayName": "Advance Guard",
+              "displayName": "Jägers",
               "kind": "skirmisher",
-              "unlockRank": 3,
+              "unlockRank": 0,
               "sprite": "britain/british_brunswickerjager_left_1_1_.svg",
               "trigger": "front",
-              "keyword": "Skirmish",
-              "text": "Step out ahead of the battalion. If the line is full, the battalion gets +1 attack instead."
+              "keyword": "Jägers",
+              "text": "When the battalion reaches the front, fall in behind it if the line has room, and shoot the enemy's front unit from second place, as the Rifles do."
             }
           ]
         },
@@ -354,6 +356,7 @@
         },
         {
           "id": "gb-belgian-line",
+          "unitId": "british_belgianline",
           "csvName": "Belgian Line",
           "displayName": "Belgian Line",
           "role": "Line Infantry",
@@ -361,15 +364,16 @@
           "type": "infantry",
           "formsSquare": true,
           "tier": 1,
-          "tierSource": "guess",
+          "tierSource": "design",
           "cost": 3,
           "sprite": "britain/british_belgianline_left.svg",
           "abilities": [
-            { "trigger": "shop", "keyword": "United Netherlands", "text": "Free if you bought Dutch Line earlier this turn." }
+            { "trigger": "shop", "keyword": "United Netherlands", "text": "Drafted together with the Dutch Line. Buy one, and the Dutch Line is free for the rest of the turn." }
           ]
         },
         {
           "id": "gb-dutch-line",
+          "unitId": "british_dutchline",
           "csvName": "Dutch Line",
           "displayName": "Dutch Line",
           "role": "Line Infantry",
@@ -377,11 +381,11 @@
           "type": "infantry",
           "formsSquare": true,
           "tier": 1,
-          "tierSource": "guess",
+          "tierSource": "design",
           "cost": 3,
           "sprite": "britain/british_dutchline_left.svg",
           "abilities": [
-            { "trigger": "shop", "keyword": "United Netherlands", "text": "Free if you bought Belgian Line earlier this turn." }
+            { "trigger": "shop", "keyword": "United Netherlands", "text": "Drafted together with the Belgian Line. Buy one, and the Belgian Line is free for the rest of the turn." }
           ]
         },
         {

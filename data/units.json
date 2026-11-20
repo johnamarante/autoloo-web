@@ -28,6 +28,7 @@
         "french_hussar",
         "french_lancer",
         "french_cuirassier",
+        "french_carabineracheval",
         "french_heavyartillery",
         "french_youngguardtirailleurs",
         "french_oldguardgrenadier"
@@ -42,6 +43,9 @@
       "roster": [
         "british_foot",
         "british_nassaurfusilier",
+        "british_belgianline",
+        "british_dutchline",
+        "british_brunswickline",
         "british_highlander",
         "british_socttsgreysdragoons",
         "british_artillery",
@@ -78,6 +82,12 @@
       "attack": 6, "health": 6, "maxRank": 9, "tier": 2, "cost": 3, "chance": 5,
       "winBuff": "major"
     },
+    "french_carabineracheval": {
+      "kind": "carabineracheval", "nation": "france", "type": "cavalry",
+      "attack": 6, "health": 6, "maxRank": 6, "tier": 3, "cost": 3, "chance": 5, "maxAllowed": 1,
+      "winBuff": "major",
+      "rallyCavalry": { "attack": 1, "health": 1, "designed": true }
+    },
     "french_heavyartillery": {
       "kind": "heavyartillery", "nation": "france", "type": "artillery",
       "attack": 1, "health": 2, "maxRank": 3, "tier": 1, "cost": 3, "chance": 10,
@@ -106,6 +116,25 @@
       "kindTags": ["AngloAlliedLineInfantry"],
       "skirmish": { "company": "british_nassauskirmisher", "unlockRank": 1 },
       "grenadiers": { "company": "british_nassaugrenadier", "unlockRank": 2 }
+    },
+    "british_belgianline": {
+      "kind": "belgianline", "nation": "britain", "type": "infantry", "formsSquare": true,
+      "attack": 2, "health": 3, "maxRank": 6, "tier": 1, "cost": 3, "chance": 10,
+      "kindTags": ["AngloAlliedLineInfantry"],
+      "pair": { "with": "british_dutchline", "designed": true }
+    },
+    "british_dutchline": {
+      "kind": "dutchline", "nation": "britain", "type": "infantry", "formsSquare": true,
+      "attack": 3, "health": 1, "maxRank": 6, "tier": 1, "cost": 3, "chance": 10,
+      "kindTags": ["AngloAlliedLineInfantry"],
+      "pair": { "with": "british_belgianline", "designed": true }
+    },
+    "british_brunswickline": {
+      "kind": "brunswickline", "nation": "britain", "type": "infantry", "formsSquare": true,
+      "attack": 2, "health": 3, "maxRank": 6, "tier": 2, "cost": 3, "chance": 10,
+      "kindTags": ["AngloAlliedLineInfantry"],
+      "riflemen": { "company": "british_brunswickjager", "unlockRank": 0, "designed": true },
+      "grenadiers": { "company": "british_brunswickleib", "unlockRank": 2 }
     },
     "british_highlander": {
       "kind": "highlander", "nation": "britain", "type": "infantry", "formsSquare": true,
@@ -143,6 +172,8 @@
     "british_foot_light": { "kind": "footskirmisher", "attackFormula": "PARENT RANK+1", "healthFormula": "1" },
     "british_foot_grenadier": { "kind": "footgrenadier", "attackFormula": "PARENT RANK+1", "healthFormula": "PARENT RANK+1", "formsSquare": true },
     "british_nassauskirmisher": { "kind": "nassauvoltiguer", "attackFormula": "1", "healthFormula": "1" },
-    "british_nassaugrenadier": { "kind": "nassaugrenadier", "attackFormula": "1", "healthFormula": "1", "formsSquare": true }
+    "british_nassaugrenadier": { "kind": "nassaugrenadier", "attackFormula": "1", "healthFormula": "1", "formsSquare": true },
+    "british_brunswickjager": { "kind": "brunswickerjager", "attackFormula": "PARENT RANK + 1", "healthFormula": "1", "rifleTactics": { "position": 2, "designed": true } },
+    "british_brunswickleib": { "kind": "brunswickleib", "attackFormula": "PARENT RANK", "healthFormula": "PARENT RANK", "formsSquare": true }
   }
 }

@@ -684,6 +684,23 @@ h2 {
   width: 1.3em;
 }
 
+/* United Netherlands: the partner battalion costs nothing this turn. */
+.token__cost--free {
+  padding: 0.1em 0.5em;
+  border-radius: 99em;
+  font-size: 1.4em;
+  color: #fff;
+  background: var(--good);
+  box-shadow: 0 0 0 0.12em #fff, 0 0 0.6em rgba(47, 106, 58, 0.7);
+  animation: free-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes free-pulse {
+  50% {
+    transform: scale(1.08);
+  }
+}
+
 /* A recruit held in reserve: kept through the next roll and the next turn. */
 .token.is-frozen {
   background: linear-gradient(rgba(235, 215, 150, 0.7), rgba(215, 185, 105, 0.5));

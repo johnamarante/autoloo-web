@@ -3,6 +3,15 @@
 
 export const RELEASE_NOTES = [
   {
+    version: "1.9",
+    title: "New regiments",
+    notes: [
+      "Britain: the Belgian Line and Dutch Line join the shop at rank 1. United Netherlands: they are always drafted together, and once you buy one, the other is free for the rest of the turn.",
+      "Britain: the Brunswick Line joins at rank 2. When it reaches the front and the line has room, its jägers fall in behind it and shoot the enemy's front unit from second place, like the Rifles. At rank 2 it also gains the Leib Battalion, which takes its place when it falls.",
+      "France: the Carabiniers à Cheval join at rank 3. Rally: when deployed, all your other cavalry gain +1/+1. They grow like Cuirassiers when they win, and only one may serve in your army (merging still ranks it up).",
+    ],
+  },
+  {
     version: "1.8",
     title: "Rations and shop ranks",
     notes: [

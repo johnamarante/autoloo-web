@@ -56,7 +56,7 @@ function buildUnit(nation, meta, rowsByName, sprites, game) {
   // Units in the game take their numbers from units.json (the Unity prefabs);
   // units still in development fall back to the CSV.
   const stats = g
-    ? { attack: g.attack, health: g.health, maxRank: g.maxRank, chance: g.chance, tier: g.tier, shopWins: game.nations[nation]?.shopRankWins?.[g.tier - 1] ?? null, cost: g.cost, maxAllowed: null }
+    ? { attack: g.attack, health: g.health, maxRank: g.maxRank, chance: g.chance, tier: g.tier, shopWins: game.nations[nation]?.shopRankWins?.[g.tier - 1] ?? null, cost: g.cost, maxAllowed: g.maxAllowed ?? null }
     : {
         attack: toInt(row.Attack),
         health: toInt(row.Health),
@@ -76,7 +76,7 @@ function buildUnit(nation, meta, rowsByName, sprites, game) {
     // Swarm Attack copies are drawn from this sprite (the lancer with a green coat).
     swarmArtLayers: meta.swarmSprite ? artLayers({ sprite: meta.swarmSprite }, sprites) : null,
     attachments: (meta.attachments || []).map((a) => {
-      const rule = g?.[a.kind === "skirmisher" ? "skirmish" : "grenadiers"];
+      const rule = g?.[a.kind === "skirmisher" ? (g.riflemen ? "riflemen" : "skirmish") : "grenadiers"];
       const company = rule && game.companies[rule.company];
       if (company) {
         return { ...a, artLayers: artLayers(a, sprites), unlockRank: rule.unlockRank, attackFormula: company.attackFormula, healthFormula: company.healthFormula };

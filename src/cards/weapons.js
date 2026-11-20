@@ -20,12 +20,13 @@ const BY_UNIT = {
   french_lancer: "lance",
   british_rockets: "rocket",
   british_rifles: "rifle",
+  british_brunswickjager: "rifle",
 };
 
 // Skirmisher companies carry light muskets (Skirmish.lightMusket); grenadier
 // companies the line musket.
-const SKIRMISH_COMPANIES = new Set(["french_linevoltiguer", "french_legerevoltiguer", "british_foot_light", "british_nassauskirmisher"]);
-const GRENADIER_COMPANIES = new Set(["french_linegrenadier", "french_carabinerapied", "british_foot_grenadier", "british_nassaugrenadier"]);
+const SKIRMISH_COMPANIES = new Set(["french_linevoltiguer", "french_legerevoltiguer", "british_foot_light", "british_nassauskirmisher", "british_brunswickjager"]);
+const GRENADIER_COMPANIES = new Set(["french_linegrenadier", "french_carabinerapied", "british_foot_grenadier", "british_nassaugrenadier", "british_brunswickleib"]);
 
 const BY_TYPE = { infantry: "musket", cavalry: "sabre", artillery: "cannonball" };
 

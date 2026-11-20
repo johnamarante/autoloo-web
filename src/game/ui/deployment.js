@@ -2,7 +2,7 @@
 // Mirrors Deployment.cs and Unit.OnMouseDown: click a unit to select it, then
 // click a slot (or drag it there) to deploy, merge, move or swap.
 import { canMerge } from "../engine/units.js";
-import { buy, buyRation, checkEndTurn, heartsLeft, move, roll, sell, shopRank, toggleFreeze, toggleRationFreeze } from "../engine/run.js";
+import { buy, buyRation, checkEndTurn, heartsLeft, move, priceOf, roll, sell, shopRank, toggleFreeze, toggleRationFreeze } from "../engine/run.js";
 import { rationRefusal } from "../engine/rations.js";
 import { createUnitCard } from "../../cards/unit-card.js";
 import { layoutSprites, spriteStageHtml } from "../../cards/sprite-art.js";
@@ -135,7 +135,7 @@ export function mountDeployment(root, ctx) {
       <div class="${cls}" data-where="${where}" data-index="${index}" role="group" aria-label="${label}">
         <img class="slot__marker" src="${UI}marker.svg" alt="">
         ${target === "merge" ? `<img class="slot__hint" src="${UI}combine_icon.svg" alt="Merge">` : ""}
-        ${unit ? tokenHtml(data, unit, { where, index, selected: isSelected, frozen }) : where === "line" ? `<button type="button" class="slot__empty" data-where="line" data-index="${index}" aria-label="Empty ${label}"></button>` : ""}
+        ${unit ? tokenHtml(data, unit, { where, index, selected: isSelected, frozen, price: where === "shop" ? priceOf(run, unit) : unit.cost }) : where === "line" ? `<button type="button" class="slot__empty" data-where="line" data-index="${index}" aria-label="Empty ${label}"></button>` : ""}
       </div>`;
   }
 
@@ -190,9 +190,9 @@ export function mountDeployment(root, ctx) {
     run.line.forEach((target, i) => {
       if (src.where === "line" && i === src.index) return;
       if (canMerge(target, unit) && target.rank >= unit.rank) map.set(i, "merge");
-      else if (src.where === "shop" ? run.coin >= unit.cost && (!target || hasGap) : true) map.set(i, "drop");
+      else if (src.where === "shop" ? run.coin >= priceOf(run, unit) && (!target || hasGap) : true) map.set(i, "drop");
     });
-    if (src.where === "shop" && run.coin < unit.cost) map.clear();
+    if (src.where === "shop" && run.coin < priceOf(run, unit)) map.clear();
     return map;
   }
 
@@ -268,6 +268,7 @@ export function mountDeployment(root, ctx) {
       if (e.type === "note") floatAtUid(e.uid, e.text);
       if (e.type === "shopRank") announceShopRank(e.rank);
       if (e.type === "drums") sfx("bugle");
+      if (e.type === "free") announceFree(e.id);
     }
     if (result.action === "ration") sfx("rankUp");
     if (result.action === "sell") floatAt(root.querySelector('[data-act="roll"]'), `+${1 + Math.floor(result.unit.rank / 3)} coin`);
@@ -422,6 +423,13 @@ export function mountDeployment(root, ctx) {
   }
 
   // Feedback --------------------------------------------------------------
+
+  // United Netherlands: the partner battalion is free for the rest of the turn.
+  function announceFree(id) {
+    const name = unitLook(data, { id, kind: "" }).name;
+    const offered = run.shop.some((s) => s?.unit.id === id);
+    toast(`United Netherlands: the ${name} ${offered ? "is" : "will be"} free this turn`, 4);
+  }
 
   // A new shop rank: a fanfare, and what it brings into the shop.
   function announceShopRank(rank) {

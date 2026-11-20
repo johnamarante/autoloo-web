@@ -269,9 +269,10 @@ export function mountBattle(root, ctx) {
       const el = addUnit(e.unit, e.side, 1);
       if (from) el.style.setProperty("--x", from.el.style.getPropertyValue("--x"));
       el.classList.add("is-arriving");
-      if (e.reason === "skirmish") spendBadge(e.from, "skirmisher");
-      floatText(e.unit.uid, e.reason === "skirmish" ? "Skirmish!" : "Grenadiers!", "info");
-      say(e.reason === "skirmish" ? "Skirmishers step out." : "Grenadiers step in.");
+      if (e.reason === "skirmish" || e.reason === "riflemen") spendBadge(e.from, "skirmisher");
+      const text = { skirmish: ["Skirmish!", "Skirmishers step out."], riflemen: ["Jägers!", "The jägers fall in behind."], grenadiers: ["Grenadiers!", "Grenadiers step in."] }[e.reason];
+      floatText(e.unit.uid, text[0], "info");
+      say(text[1]);
       await wait(450);
     },
     // Swarm Attack: the lancer's health drops and its green-coated copies ride

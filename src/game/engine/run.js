@@ -12,6 +12,7 @@ export { shopRank };
  *   shop[0..2]  { unit, frozen } or null
  *   rations[0..1]  { id, frozen } or null
  *   colors      how many Colors raised the shop rank
+ *   freeUnit    a unit id that costs nothing for the rest of the turn (United Netherlands)
  */
 export function createRun(catalog, nation, rng, saved = null) {
   const rules = catalog.rules;
@@ -25,10 +26,11 @@ export function createRun(catalog, nation, rng, saved = null) {
     shop: Array(rules.shopSlots).fill(null),
     rations: Array(rules.rationSlots ?? 0).fill(null),
     colors: 0,
+    freeUnit: null,
     status: "playing",
   };
   if (saved) {
-    Object.assign(run, { round: saved.round, coin: saved.coin, wins: saved.wins, losses: saved.losses, colors: Number(saved.colors) || 0 });
+    Object.assign(run, { round: saved.round, coin: saved.coin, wins: saved.wins, losses: saved.losses, colors: Number(saved.colors) || 0, freeUnit: saved.freeUnit ?? null });
     (saved.RationQueue ?? []).forEach((id, i) => {
       if (catalog.rations[id] && i < run.rations.length) run.rations[i] = { id, frozen: true };
     });
@@ -58,6 +60,7 @@ export function shopPool(catalog, run) {
 function fillShop(catalog, run, rng) {
   const pool = shopPool(catalog, run);
   const total = pool.reduce((s, p) => s + p.def.chance, 0);
+  const fresh = run.shop.map((slot, i) => (slot?.frozen ? null : i)).filter((i) => i !== null);
   run.shop = run.shop.map((slot) => {
     if (slot?.frozen) return slot;
     let roll = rng.int(total);
@@ -67,7 +70,26 @@ function fillShop(catalog, run, rng) {
     }
     return null;
   });
+  pairUp(catalog, run, rng, fresh);
   fillRations(catalog, run, rng);
+}
+
+// Designed ability (United Netherlands): the Belgian and Dutch lines are
+// drafted together. A paired unit that comes up brings its partner into
+// another freshly drafted slot, unless the partner is already on offer.
+function pairUp(catalog, run, rng, fresh) {
+  for (const i of fresh) {
+    const partner = catalog.def(run.shop[i]?.unit.id)?.pair?.with;
+    if (!partner || run.shop.some((s) => s?.unit.id === partner)) continue;
+    const j = fresh.find((k) => k !== i && !catalog.def(run.shop[k]?.unit.id)?.pair);
+    if (j === undefined) continue;
+    run.shop[j] = { unit: createUnit(catalog, partner, { rng }), frozen: false };
+  }
+}
+
+/** What a shop unit costs now: nothing when United Netherlands has made it free. */
+export function priceOf(run, unit) {
+  return run.freeUnit && unit.id === run.freeUnit ? 0 : unit.cost;
 }
 
 // Rations come up evenly from what the shop rank offers; held ones stay.
@@ -122,21 +144,39 @@ export function buy(catalog, run, shopIndex, lineIndex) {
   const slot = run.shop[shopIndex];
   if (!slot) return fail("Empty shop slot");
   const unit = slot.unit;
-  if (run.coin < unit.cost) return fail("Not enough coin");
+  const price = priceOf(run, unit);
+  if (run.coin < price) return fail("Not enough coin");
   const target = run.line[lineIndex];
 
   if (target && canMerge(target, unit)) {
     if (target.rank < unit.rank) return fail("Cannot merge onto a lower rank");
-    run.coin -= unit.cost;
+    run.coin -= price;
     run.shop[shopIndex] = null;
-    return ok("merge", { unit: target, events: rankUp(catalog, run, target, unit) });
+    return ok("merge", { unit: target, events: [...rankUp(catalog, run, target, unit), ...bought(catalog, run, unit, price)] });
+  }
+  const def = catalog.def(unit.id);
+  if (def.maxAllowed && run.line.filter((u) => u?.id === unit.id).length >= def.maxAllowed) {
+    return fail(`Only ${def.maxAllowed} may serve in your army; merge it instead`);
   }
   if (target && !shiftToMakeRoom(run, lineIndex)) return fail("The line is full");
 
-  run.coin -= unit.cost;
+  run.coin -= price;
   run.shop[shopIndex] = null;
   run.line[lineIndex] = unit;
-  return ok("deploy", { unit, events: onDeploy(catalog, run, unit) });
+  return ok("deploy", { unit, events: [...onDeploy(catalog, run, unit), ...bought(catalog, run, unit, price)] });
+}
+
+// United Netherlands: buying one of a pair makes its partner free this turn;
+// taking the free one uses the offer up.
+function bought(catalog, run, unit, price) {
+  if (price === 0 && unit.id === run.freeUnit) {
+    run.freeUnit = null;
+    return [];
+  }
+  const partner = catalog.def(unit.id)?.pair?.with;
+  if (!partner) return [];
+  run.freeUnit = partner;
+  return [{ type: "free", id: partner }];
 }
 
 /** Moves a deployed unit to another line slot: move, merge, or swap. */
@@ -191,6 +231,7 @@ export function rationDetails(run) {
 export function applyBattleResult(catalog, run, result, rng) {
   const rankBefore = shopRank(catalog, run);
   endSpirits(run);
+  run.freeUnit = null;
   if (result === "win") run.wins++;
   if (result === "loss") run.losses++;
   if (run.losses >= catalog.rules.hearts) run.status = "defeat";
@@ -251,6 +292,10 @@ function onDeploy(catalog, run, unit) {
     tagged.forEach((u) => buff(u, 1, 1));
     // Unity also gives the Highlanders themselves a second +1/+1 when anyone else shares the tag.
     if (tagged.some((u) => u !== unit)) buff(unit, 1, 1);
+  }
+  if (def.rallyCavalry) {
+    const { attack, health } = def.rallyCavalry;
+    allies.filter((u) => u !== unit && u.type === "cavalry").forEach((u) => buff(u, attack, health));
   }
   if (def.deployBoostInfantry) {
     const { attack, health } = def.deployBoostInfantry;
