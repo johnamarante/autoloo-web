@@ -684,6 +684,69 @@ h2 {
   width: 1.3em;
 }
 
+/* Company Pompoms: the click target over a French fusilier's pompom, with
+   the plain arrow cursor rather than the grab hand, and the colour picker. */
+.token__pompom {
+  position: absolute;
+  width: 1.8em;
+  height: 1.8em;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  cursor: default;
+}
+
+.token__pompom:hover,
+.token__pompom:focus-visible {
+  box-shadow: 0 0 0 0.15em rgba(255, 255, 255, 0.9), 0 0 0 0.3em var(--gold);
+  outline: none;
+}
+
+.pompom-picker {
+  position: absolute;
+  top: -1.2em;
+  left: 50%;
+  z-index: 5;
+  display: flex;
+  gap: 0.45em;
+  padding: 0.35em 0.6em;
+  border-radius: 99em;
+  background: #fff;
+  box-shadow: 0 0.15em 0.5em rgba(42, 32, 23, 0.35);
+  transform: translateX(-50%);
+}
+
+.pompom-picker__dot {
+  width: 1.5em;
+  height: 1.5em;
+  padding: 0;
+  border: 0.15em solid rgba(42, 32, 23, 0.25);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.pompom-picker__dot[data-color="green"] {
+  background: #2b9a3c;
+}
+
+.pompom-picker__dot[data-color="blue"] {
+  background: #3e46c7;
+}
+
+.pompom-picker__dot[data-color="orange"] {
+  background: #f0841c;
+}
+
+.pompom-picker__dot[data-color="purple"] {
+  background: #8b3cc4;
+}
+
+.pompom-picker__dot.is-current {
+  border-radius: 0.3em;
+  border-color: var(--ink);
+  box-shadow: 0 0 0 0.12em #fff, 0 0 0 0.24em var(--ink);
+}
+
 /* United Netherlands: the partner battalion costs nothing this turn. */
 .token__cost--free {
   padding: 0.1em 0.5em;
@@ -1165,15 +1228,16 @@ h2 {
   transform: translateY(-0.1em);
 }
 
+/* Five units to a row, small enough that both rosters fit on the board. */
 .side__roster {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(5, auto);
   justify-content: center;
-  gap: 0;
+  gap: 0.6em 0;
   margin: 0;
   padding: 0;
   list-style: none;
-  font-size: 0.66em;
+  font-size: 0.5em;
 }
 
 .menu__version {

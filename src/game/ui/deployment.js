@@ -2,7 +2,7 @@
 // Mirrors Deployment.cs and Unit.OnMouseDown: click a unit to select it, then
 // click a slot (or drag it there) to deploy, merge, move or swap.
 import { canMerge } from "../engine/units.js";
-import { buy, buyRation, checkEndTurn, heartsLeft, move, priceOf, roll, sell, shopRank, toggleFreeze, toggleRationFreeze } from "../engine/run.js";
+import { buy, buyRation, checkEndTurn, heartsLeft, move, priceOf, roll, sell, setPompom, shopRank, toggleFreeze, toggleRationFreeze } from "../engine/run.js";
 import { rationRefusal } from "../engine/rations.js";
 import { createUnitCard } from "../../cards/unit-card.js";
 import { layoutSprites, spriteStageHtml } from "../../cards/sprite-art.js";
@@ -34,6 +34,7 @@ export function mountDeployment(root, ctx) {
   let hovered = null;
   let drag = null;
   let suppressClick = false;
+  let pompomFor = null; // line index whose pompom picker is open
 
   const unitAt = (ref) => (!ref || ref.where === "ration" ? null : ref.where === "shop" ? run.shop[ref.index]?.unit ?? null : run.line[ref.index] ?? null);
   const rationAt = (ref) => (ref?.where === "ration" ? run.rations[ref.index] ?? null : null);
@@ -135,8 +136,22 @@ export function mountDeployment(root, ctx) {
       <div class="${cls}" data-where="${where}" data-index="${index}" role="group" aria-label="${label}">
         <img class="slot__marker" src="${UI}marker.svg" alt="">
         ${target === "merge" ? `<img class="slot__hint" src="${UI}combine_icon.svg" alt="Merge">` : ""}
+        ${where === "line" && pompomFor === index && unit ? pompomPickerHtml(unit, index) : ""}
         ${unit ? tokenHtml(data, unit, { where, index, selected: isSelected, frozen, price: where === "shop" ? priceOf(run, unit) : unit.cost }) : where === "line" ? `<button type="button" class="slot__empty" data-where="line" data-index="${index}" aria-label="Empty ${label}"></button>` : ""}
       </div>`;
+  }
+
+  // Company Pompoms: four company colours over the fusilier's shako.
+  function pompomPickerHtml(unit, index) {
+    const pompom = catalog.def(unit.id)?.pompom;
+    if (!pompom) return "";
+    const current = unit.pompom ?? pompom.default;
+    const sign = (n) => (n > 0 ? `+${n}` : `${n}`);
+    const buttons = Object.entries(pompom.colors).map(([color, [a, h]]) => {
+      const tip = a || h ? `${color}: ${sign(a)} attack, ${sign(h)} health` : `${color}: as drafted`;
+      return `<button type="button" class="pompom-picker__dot${color === current ? " is-current" : ""}" data-act="pompom-set" data-color="${color}" data-index="${index}" aria-pressed="${color === current}" aria-label="${tip}" title="${tip}"></button>`;
+    });
+    return `<div class="pompom-picker" role="group" aria-label="Company pompom">${buttons.join("")}</div>`;
   }
 
   function rationSlotHtml(index, slot) {
@@ -307,6 +322,25 @@ export function mountDeployment(root, ctx) {
       return;
     }
     const btn = e.target.closest("[data-act]");
+    if (btn?.dataset.act === "pompom") {
+      const index = run.line.findIndex((u) => u && String(u.uid) === btn.dataset.uid);
+      pompomFor = pompomFor === index ? null : index;
+      render();
+      return;
+    }
+    if (btn?.dataset.act === "pompom-set") {
+      const index = Number(btn.dataset.index);
+      pompomFor = null;
+      if (!act(setPompom(catalog, run, index, btn.dataset.color))) render();
+      return;
+    }
+    if (pompomFor !== null) {
+      pompomFor = null;
+      if (!btn) {
+        render();
+        return;
+      }
+    }
     if (btn) return onAction(btn.dataset.act);
     const hit = e.target.closest(".token, .slot__empty, .slot");
     if (hit) return clickRef({ where: hit.dataset.where, index: Number(hit.dataset.index) });
@@ -317,6 +351,17 @@ export function mountDeployment(root, ctx) {
   };
 
   root.onkeydown = (e) => {
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches?.(".token__pompom")) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.target.click();
+      return;
+    }
+    if (e.key === "Escape" && pompomFor !== null) {
+      pompomFor = null;
+      render();
+      return;
+    }
     if (e.key === "Escape" && selected) {
       selected = null;
       render();

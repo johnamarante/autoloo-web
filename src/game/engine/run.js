@@ -179,6 +179,26 @@ function bought(catalog, run, unit, price) {
   return [{ type: "free", id: partner }];
 }
 
+/**
+ * Designed ability (Company Pompoms, French line): picks the battalion's
+ * company pompom, moving points between attack and health relative to the
+ * blue it was drafted with. Free, and can be changed back. Neither number
+ * may drop below 1.
+ */
+export function setPompom(catalog, run, lineIndex, color) {
+  const unit = run.line[lineIndex];
+  const pompom = unit && catalog.def(unit.id)?.pompom;
+  if (!pompom) return fail("Only French line battalions wear company pompoms");
+  const next = pompom.colors[color];
+  if (!next) return fail("Unknown pompom colour");
+  const was = pompom.colors[unit.pompom ?? pompom.default];
+  const attack = unit.attack + next[0] - was[0];
+  const health = unit.health + next[1] - was[1];
+  if (attack < 1 || health < 1) return fail(health < 1 ? "Not enough health to give up" : "Not enough attack to give up");
+  Object.assign(unit, { attack, health, pompom: color === pompom.default ? undefined : color });
+  return ok("pompom", { unit, events: [{ type: "note", uid: unit.uid, text: `${attack}/${health}` }] });
+}
+
 /** Moves a deployed unit to another line slot: move, merge, or swap. */
 export function move(catalog, run, fromIndex, toIndex) {
   const unit = run.line[fromIndex];

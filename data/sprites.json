@@ -2,6 +2,9 @@
   "_about": "Per-sprite sizing so every card draws at the same scale as the Unity battlefield. unityScale is the svgsprite (or svgbackgroundsprite) localScale from the unit's prefab. 'scaleSource': 'estimated' means no prefab exists yet, so the scale was picked to match a standing infantryman (about 11 Unity units tall). size is the SVG's pixel size; bounds is the drawn content (x, y, w, h) in those pixels, measured with tools/measure-sprites.html.",
   "sprites": {
     "france/french_line_left_2_1_.svg": { "unityScale": 2.75, "size": [388, 422], "bounds": [35.5, 30.4, 347, 379.3] },
+    "france/french_line_left_2_1_green.svg": { "unityScale": 2.75, "size": [388, 422], "bounds": [35.5, 30.4, 347, 379.3] },
+    "france/french_line_left_2_1_orange.svg": { "unityScale": 2.75, "size": [388, 422], "bounds": [35.5, 30.4, 347, 379.3] },
+    "france/french_line_left_2_1_purple.svg": { "unityScale": 2.75, "size": [388, 422], "bounds": [35.5, 30.4, 347, 379.3] },
     "france/french_linegrenadier_left_1_1_.svg": { "unityScale": 3, "size": [421, 441], "bounds": [71.3, 29.3, 296.2, 367.2] },
     "france/french_linevoltiguer_left_2_-1_.svg": { "unityScale": 3, "size": [493, 452], "bounds": [116.7, 71.4, 327.8, 282.2] },
     "france/french_chasseur_left_3_1_.svg": { "unityScale": 3, "size": [495, 397], "bounds": [92.5, 43.4, 384.6, 342.5] },

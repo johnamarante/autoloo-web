@@ -3,6 +3,14 @@
 
 export const RELEASE_NOTES = [
   {
+    version: "1.10",
+    title: "Company pompoms",
+    notes: [
+      "French line infantry: click the pompom on a deployed fusilier's shako to choose his company. Green: +1 attack, -1 health. Blue: as drafted. Orange: -1 attack, +1 health. Purple: -2 attack, +2 health. It is free and can be changed any time during deployment, and the pompom on his shako changes colour.",
+      "The main menu's rosters are now a tidy grid of smaller units that fits on the screen.",
+    ],
+  },
+  {
     version: "1.9",
     title: "New regiments",
     notes: [

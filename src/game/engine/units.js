@@ -139,6 +139,7 @@ export function toUnitDetail(unit, queuePosition) {
   };
   const rations = carried(unit);
   if (Object.keys(rations).length) detail.Rations = rations;
+  if (unit.pompom) detail.Pompom = unit.pompom;
   return detail;
 }
 
@@ -164,6 +165,7 @@ export function fromUnitDetail(catalog, nation, detail) {
   const r = detail.Rations ?? {};
   for (const key of ["skirmishBonus", "grenadierBonus", "spirits"]) if (Number(r[key]) > 0) unit[key] = Number(r[key]);
   if (r.telescope) unit.telescope = true;
+  if (typeof detail.Pompom === "string" && catalog.def(id)?.pompom?.colors[detail.Pompom]) unit.pompom = detail.Pompom;
   return unit;
 }
 

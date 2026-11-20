@@ -31,6 +31,7 @@ export const KEYWORDS = {
   "Rifle Tactics": "Riflemen shoot from second place in line, so another unit can take the hits in front.",
   Regroup: "When this unit falls, survivors from the same nation absorb its veterans.",
   "United Netherlands": "The Belgian and Dutch lines are drafted together. Buy one and the other is free for the rest of that turn.",
+  "Company Pompoms": "French line companies wore different pompoms. Pick one to move points between attack and health; it costs nothing and can be changed any time during deployment.",
   Jägers: "Riflemen who fall in behind their battalion when it reaches the front, if the line has room, and shoot from second place.",
   Square: "When charged by cavalry, this infantry forms square: +3 attack, and it takes only 1 damage per cavalry attack. Units that only just reached the front mid-battle have no time to form one. Artillery deals double damage to a square.",
   Rank: "Merge a duplicate of this unit onto it to rank up. Each rank adds +1 attack and +1 health and can unlock companies.",

@@ -59,7 +59,7 @@ function def(b, u) {
 }
 
 function snapshot(u) {
-  return { uid: u.uid, id: u.id, name: u.name, attack: u.attack, attackBonus: u.attackBonus, health: u.health, rank: u.rank, isSkirmisher: u.isSkirmisher, swarmCopy: !!u.swarmCopy };
+  return { uid: u.uid, id: u.id, name: u.name, attack: u.attack, attackBonus: u.attackBonus, health: u.health, rank: u.rank, isSkirmisher: u.isSkirmisher, swarmCopy: !!u.swarmCopy, pompom: u.pompom };
 }
 
 /** What the battle screen shows on a unit's badges: attack including bonuses, and health. */

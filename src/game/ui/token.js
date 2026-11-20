@@ -12,11 +12,11 @@ const TOKEN = { emPerUnit: 8 / 10.43, maxW: 10.4, maxH: 9 };
 
 export function tokenHtml(data, unit, { where, index, selected = false, frozen = false, facing = "right", price = unit.cost } = {}) {
   const look = unitLook(data, unit);
-  // A card can let its art stand taller than other units' (the rocket trooper and his pole).
-  const art = look.artLayers.length
-    ? spriteStageHtml(layoutSprites(look.artLayers, { ...TOKEN, maxH: look.card?.tokenMaxH ?? TOKEN.maxH }), "token__stage")
-    : `<div class="token__noart">${escapeHtml(look.name)}</div>`;
   const def = data.catalog.def(unit.id);
+  // A card can let its art stand taller than other units' (the rocket trooper and his pole).
+  const layout = look.artLayers.length ? layoutSprites(look.artLayers, { ...TOKEN, maxH: look.card?.tokenMaxH ?? TOKEN.maxH }) : null;
+  let art = layout ? spriteStageHtml(layout, "token__stage") : `<div class="token__noart">${escapeHtml(look.name)}</div>`;
+  if (layout && def?.pompom && where === "line") art = art.replace(/<\/div>$/, () => pompomHotspot(layout, unit) + "</div>");
   const weapon = weaponKey(unit.id, def?.type ?? "infantry");
   const badges = companyBadges(def, unit);
   const label = `${look.name}, ${unit.attack} attack with ${WEAPONS[weapon].label.toLowerCase()}, ${unit.health} health, rank ${unit.rank}${
@@ -39,6 +39,16 @@ export function tokenHtml(data, unit, { where, index, selected = false, frozen =
       <span class="token__stat token__stat--atk"><span class="token__num">${unit.attack}</span></span>
       <span class="token__stat token__stat--hp"><img class="token__heart" src="${HEART}" alt=""><span class="token__num">${unit.health}</span></span>
     </button>`;
+}
+
+// Company Pompoms: a click target over the pompom on the fusilier's shako.
+// Its centre in the sprite is (157, 46) of the 388 x 422 SVG.
+const POMPOM = { x: 157 / 388, y: 46 / 422 };
+function pompomHotspot(layout, unit) {
+  const l = layout.layers[0];
+  const left = l.left + l.width * POMPOM.x;
+  const top = l.top + l.height * POMPOM.y;
+  return `<span class="token__pompom" role="button" tabindex="0" data-act="pompom" data-uid="${unit.uid}" style="left:${left.toFixed(3)}em;top:${top.toFixed(3)}em" aria-label="Change company pompom (${unit.pompom ?? "blue"})" title="Company pompom"></span>`;
 }
 
 // The companies a battalion carries once they are unlocked (Unit.CheckUnlocksOnStart

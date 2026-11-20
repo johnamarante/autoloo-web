@@ -18,7 +18,15 @@
           "tierSource": "prefab",
           "cost": 3,
           "sprite": "france/french_line_left_2_1_.svg",
-          "abilities": [],
+          "pompomSprites": {
+            "green": "france/french_line_left_2_1_green.svg",
+            "orange": "france/french_line_left_2_1_orange.svg",
+            "purple": "france/french_line_left_2_1_purple.svg"
+          },
+          "abilities": [
+            
+            { "trigger": "shop", "keyword": "Company Pompoms", "text": "Click the pompom on a deployed battalion's shako to pick its company: green +1 attack -1 health, blue as drafted, orange -1 attack +1 health, purple -2 attack +2 health." }
+          ],
           "attachments": [
             {
               "csvName": "Voltiguers (ligne)",

@@ -75,6 +75,10 @@ function buildUnit(nation, meta, rowsByName, sprites, game) {
     artLayers: artLayers(meta, sprites),
     // Swarm Attack copies are drawn from this sprite (the lancer with a green coat).
     swarmArtLayers: meta.swarmSprite ? artLayers({ sprite: meta.swarmSprite }, sprites) : null,
+    // Company Pompoms: the same fusilier with a green, orange or purple pompom.
+    pompomArtLayers: meta.pompomSprites
+      ? Object.fromEntries(Object.entries(meta.pompomSprites).map(([color, sprite]) => [color, artLayers({ sprite }, sprites)]))
+      : null,
     attachments: (meta.attachments || []).map((a) => {
       const rule = g?.[a.kind === "skirmisher" ? (g.riflemen ? "riflemen" : "skirmish") : "grenadiers"];
       const company = rule && game.companies[rule.company];

@@ -31,7 +31,10 @@ export async function loadGameData() {
 export function unitLook(data, unit) {
   const entry = data.cards.get(unit.id);
   if (entry) {
-    const artLayers = unit.swarmCopy && entry.card.swarmArtLayers ? entry.card.swarmArtLayers : entry.card.artLayers;
+    const artLayers =
+      unit.swarmCopy && entry.card.swarmArtLayers
+        ? entry.card.swarmArtLayers
+        : (unit.pompom && entry.card.pompomArtLayers?.[unit.pompom]) || entry.card.artLayers;
     return { name: entry.card.displayName, artLayers, card: entry.card, roster: entry.roster };
   }
   const company = data.companies.get(unit.id);
