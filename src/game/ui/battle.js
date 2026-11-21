@@ -130,7 +130,11 @@ export function mountBattle(root, ctx) {
     el.addEventListener("animationend", () => el.remove());
   }
 
-  function frames(set, uid, { flip = false, scale = 1, dy = 0.45, dx = 0 } = {}) {
+  // Plays an effect's frames centred on a point of a unit: dy is the height on
+  // its token (0 top, 1 bottom; the barrels sit a little below the middle) and
+  // dx a sideways nudge in token widths. The frames are wide and short, so each
+  // is centred on its own size rather than as a square.
+  function frames(set, uid, { flip = false, scale = 1, dy = 0.58, dx = 0 } = {}) {
     const p = centerOf(uid, dy);
     if (!p || skipped) return;
     const img = document.createElement("img");
@@ -138,9 +142,9 @@ export function mountBattle(root, ctx) {
     img.alt = "";
     const size = p.w * 0.9 * scale;
     img.style.width = `${size}px`;
-    img.style.left = `${p.x + dx * p.w - size / 2}px`;
-    img.style.top = `${p.y - size / 2}px`;
-    if (flip) img.style.transform = "scaleX(-1)";
+    img.style.left = `${p.x + dx * p.w}px`;
+    img.style.top = `${p.y}px`;
+    img.style.transform = `translate(-50%, -50%)${flip ? " scaleX(-1)" : ""}`;
     fx.append(img);
     const list = FRAMES[set];
     let i = 0;
@@ -317,13 +321,13 @@ export function mountBattle(root, ctx) {
     async fire(e) {
       if (e.weapon === "ball") {
         sound("cannonFire");
-        frames("cannon", e.from, { scale: 0.9, dy: 0.5, dx: units.get(e.from)?.side === "left" ? 0.35 : -0.35, flip: units.get(e.from)?.side === "right" });
+        frames("cannon", e.from, { scale: 0.9, dy: 0.54, dx: units.get(e.from)?.side === "left" ? 0.35 : -0.35, flip: units.get(e.from)?.side === "right" });
         await fly(e.from, e.to);
         sound("cannonHit");
         if (e.crit) floatText(e.to, "×2!", "bad");
       } else if (e.weapon === "rifle") {
         sound("rifle");
-        frames("rifle", e.from, { scale: 0.8, dy: 0.4, dx: units.get(e.from)?.side === "left" ? 0.3 : -0.3, flip: units.get(e.from)?.side === "right" });
+        frames("rifle", e.from, { scale: 0.8, dy: 0.57, dx: units.get(e.from)?.side === "left" ? 0.3 : -0.3, flip: units.get(e.from)?.side === "right" });
         await wait(350);
       } else if (e.weapon === "rockets") {
         sound("rockets");

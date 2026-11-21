@@ -3,6 +3,11 @@
 
 export const RELEASE_NOTES = [
   {
+    version: "1.11.1",
+    title: "Smoke where the guns are",
+    notes: ["Musket, rifle and cannon blasts now come from the barrels: lower, and centred on the unit, instead of floating above their heads."],
+  },
+  {
     version: "1.11",
     title: "Dragoons, and a fairer Claymore",
     notes: [
