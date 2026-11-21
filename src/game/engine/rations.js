@@ -47,7 +47,7 @@ export function applyRation(catalog, run, rationId, unit, rng) {
       events.push({ type: "note", uid: unit.uid, text: "Grenadiers +1/+1" });
       break;
     case "spirits":
-      // Taken off again once the battle is over (endSpirits).
+      // After the battle the unit is drunk and deserts (desertDrunks).
       unit.spirits = (unit.spirits ?? 0) + 3;
       add(unit, 3, 3);
       break;
@@ -91,14 +91,14 @@ export function applyRation(catalog, run, rationId, unit, rng) {
   return events;
 }
 
-/** Spirits wear off after the battle (a unit is never left below 1 health). */
-export function endSpirits(run) {
-  for (const u of run.line) {
-    if (!u?.spirits) continue;
-    u.attack = Math.max(0, u.attack - u.spirits);
-    u.health = Math.max(1, u.health - u.spirits);
-    u.spirits = 0;
-  }
+/**
+ * Spirits: once the battle is over, every unit that drank them has got drunk
+ * and wandered off. They leave the line for good. Returns the deserters.
+ */
+export function desertDrunks(run) {
+  const deserters = run.line.filter((u) => u?.spirits);
+  run.line = run.line.map((u) => (u?.spirits ? null : u));
+  return deserters;
 }
 
 /** The shop rank its wins have earned, before any Colors. */

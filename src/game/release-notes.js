@@ -3,6 +3,14 @@
 
 export const RELEASE_NOTES = [
   {
+    version: "1.12",
+    title: "Drunk and disorderly",
+    notes: [
+      "Spirits still give +3/+3 for the next battle, but afterwards the soldiers are drunk and wander off: the unit deserts and leaves your line for good. The next deployment tells you who went missing.",
+      "More opponents to fight on every turn, especially for Britain's later turns.",
+    ],
+  },
+  {
     version: "1.11.1",
     title: "Smoke where the guns are",
     notes: ["Musket, rifle and cannon blasts now come from the barrels: lower, and centred on the unit, instead of floating above their heads."],

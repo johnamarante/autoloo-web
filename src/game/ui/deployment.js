@@ -26,6 +26,7 @@ const ICON = {
  * @param root  element to render into
  * @param ctx   { data, run, rng, opponent, playerName, onBattle(), onQuit(), shopRankUp }
  *              shopRankUp: the new shop rank when the last battle raised it.
+ *              deserted: units that drank spirits and deserted after the last battle.
  */
 export function mountDeployment(root, ctx) {
   const { data, run, rng } = ctx;
@@ -515,7 +516,13 @@ export function mountDeployment(root, ctx) {
   }
 
   render();
-  if (ctx.shopRankUp) announceShopRank(ctx.shopRankUp);
+  // Deserters first, then (once that message has been read) any new shop rank.
+  if (ctx.deserted?.length) {
+    const names = ctx.deserted.map((u) => unitLook(data, u).name);
+    const list = names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names.at(-1)}` : names[0];
+    toast(`Spirits: the ${list} got drunk and deserted!`, 4.5);
+    if (ctx.shopRankUp) setTimeout(() => root.isConnected && announceShopRank(ctx.shopRankUp), 4500);
+  } else if (ctx.shopRankUp) announceShopRank(ctx.shopRankUp);
   return {
     destroy() {
       cancelDrag();

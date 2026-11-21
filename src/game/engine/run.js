@@ -2,7 +2,7 @@
 // Deployment.cs (shop, roll, freeze, sell, end turn) and the drop and merge
 // rules in Unit.OnMouseDown / Deployment.TrySnapToDeploymentQueueSpace.
 import { canMerge, createUnit, fromUnitDetail, rankRefund, sellValue, toUnitDetail } from "./units.js";
-import { applyRation, endSpirits, rationPool, rationRefusal, shopRank } from "./rations.js";
+import { applyRation, desertDrunks, rationPool, rationRefusal, shopRank } from "./rations.js";
 
 export { shopRank };
 
@@ -247,10 +247,10 @@ export function rationDetails(run) {
   return run.rations.flatMap((s) => (s?.frozen ? [s.id] : []));
 }
 
-/** Returns the new shop rank when this result raised it. */
+/** Returns the new shop rank when this result raised it, and any units that deserted drunk. */
 export function applyBattleResult(catalog, run, result, rng) {
   const rankBefore = shopRank(catalog, run);
-  endSpirits(run);
+  const deserted = desertDrunks(run);
   run.freeUnit = null;
   if (result === "win") run.wins++;
   if (result === "loss") run.losses++;
@@ -260,7 +260,7 @@ export function applyBattleResult(catalog, run, result, rng) {
   run.coin = catalog.rules.startingCoin;
   fillShop(catalog, run, rng);
   const rank = shopRank(catalog, run);
-  return rank > rankBefore ? { shopRankUp: rank } : {};
+  return { ...(rank > rankBefore ? { shopRankUp: rank } : {}), deserted };
 }
 
 export function heartsLeft(catalog, run) {

@@ -6,7 +6,7 @@
     "wine": { "name": "Wine", "shopRank": 1, "image": "wine.webp", "text": "+1/+1 for this battalion's skirmishers." },
     "onion": { "name": "Onion", "nation": "france", "shopRank": 1, "image": "onion.webp", "text": "+1/+1 for this battalion's grenadiers." },
     "vegetables": { "name": "Vegetables", "shopRank": 2, "image": "vegetables.webp", "text": "+2/+2." },
-    "spirits": { "name": "Spirits", "shopRank": 2, "image": "spirits.webp", "text": "+3/+3 for the next battle only." },
+    "spirits": { "name": "Spirits", "shopRank": 2, "image": "spirits.webp", "text": "+3/+3 for the next battle. Afterwards the soldiers are drunk and wander off: the unit deserts and leaves your line for good." },
     "hay": { "name": "Hay", "shopRank": 2, "image": "hay.webp", "text": "+1/+1 for all your cavalry." },
     "telescope": { "name": "Telescope", "shopRank": 2, "image": "telescope.webp", "text": "On a scout: the scout report shows every enemy unit with its numbers. On artillery: +1/+1. On anything else: the scout report shows the enemy's front unit with its numbers. One per unit." },
     "drums": { "name": "Drums", "shopRank": 2, "image": "drums.webp", "text": "Clears the recruits and drafts three of this unit in their place." },

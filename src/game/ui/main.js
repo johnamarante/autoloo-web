@@ -27,6 +27,7 @@ let screen;
 let run;
 let opponent;
 let shopRankUp = null; // set when the last battle raised the shop rank
+let deserted = []; // units that drank spirits and wandered off after the last battle
 
 function show(mount, ctx) {
   screen?.destroy();
@@ -78,8 +79,9 @@ async function deployment() {
   music(null);
   ambience("deployment");
   opponent = await findOpponent(store, data.catalog, run.nation, run.round, rng, shopRank(data.catalog, run));
-  show(mountDeployment, { data, run, rng, opponent, playerName: player.name, onBattle: battle, onQuit: menu, shopRankUp });
+  show(mountDeployment, { data, run, rng, opponent, playerName: player.name, onBattle: battle, onQuit: menu, shopRankUp, deserted });
   shopRankUp = null;
+  deserted = [];
   sfx("bugle"); // a fresh shop each turn, as Deployment draws one
 }
 
@@ -96,7 +98,9 @@ function battle() {
 }
 
 function report(army, result) {
-  shopRankUp = applyBattleResult(data.catalog, run, result, rng).shopRankUp ?? null;
+  const news = applyBattleResult(data.catalog, run, result, rng);
+  shopRankUp = news.shopRankUp ?? null;
+  deserted = news.deserted ?? [];
   if (run.status === "playing") saveRun(run, player.name);
   else clearSave();
   savePlayerRecord(store, run, player, data.catalog);

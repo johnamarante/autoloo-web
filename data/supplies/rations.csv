@@ -1,6 +1,6 @@
 ﻿Name,Effect,Note
 Bread,"""+1/1""",
-Spirits,"""temp +3/3""",
+Spirits,"""+3/3 for the next battle, then the unit gets drunk and deserts""",
 Hay,"""all cavalry +1/1""",
 Onion,"""+1/1 for unit grenadiers""",France only
 Bacon,"""+3/3 for all infantry units""",Britain Only
