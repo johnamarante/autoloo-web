@@ -12,7 +12,7 @@
     "drums": { "name": "Drums", "shopRank": 2, "image": "drums.webp", "text": "Clears the recruits and drafts three of this unit in their place." },
     "colors": { "name": "Colors", "shopRank": 2, "image": { "france": "colors-france.webp", "britain": "colors-britain.webp" }, "text": "The shop goes up one rank for the rest of the campaign." },
     "bacon": { "name": "Bacon", "nation": "britain", "shopRank": 3, "image": "bacon.webp", "text": "+3/+3 for all your infantry." },
-    "claymore": { "name": "Claymore Sword", "nation": "britain", "shopRank": 3, "image": "claymore.webp", "text": "Doubles the attack of infantry or cavalry, and the health too of the Scots (Highlanders and Scots Greys). On artillery: +1/+1." },
+    "claymore": { "name": "Claymore Sword", "nation": "britain", "shopRank": 3, "image": "claymore.webp", "text": "On Highlanders or Scots Greys: +3/+3 to them, and +1/+1 to all your other infantry and cavalry. On any other unit: +1/+1." },
     "eagle": { "name": "Eagle", "nation": "france", "shopRank": 4, "image": "eagle.webp", "text": "Doubles this unit's attack and health." }
   }
 }

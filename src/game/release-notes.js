@@ -3,6 +3,14 @@
 
 export const RELEASE_NOTES = [
   {
+    version: "1.11",
+    title: "Dragoons, and a fairer Claymore",
+    notes: [
+      "France: the Dragoons join the shop at rank 1 (4/4). Dismount: facing infantry that could form square, they get down and fight on foot with their muskets, so no square forms against them. Each side now has ten units.",
+      "The Claymore Sword is reworked. On Highlanders or Scots Greys: +3/+3 to them and +1/+1 to all your other infantry and cavalry. On any other unit: +1/+1. It no longer doubles stats.",
+    ],
+  },
+  {
     version: "1.10.1",
     title: "A taller Dutchman",
     notes: ["The Dutch Line is drawn about a third larger, so he stands as tall as the rest of the line instead of being shrunk to fit his raised musket."],

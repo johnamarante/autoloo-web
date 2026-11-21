@@ -34,6 +34,8 @@ export function unitLook(data, unit) {
     const artLayers =
       unit.swarmCopy && entry.card.swarmArtLayers
         ? entry.card.swarmArtLayers
+        : unit.dismounted && entry.card.dismountArtLayers
+        ? entry.card.dismountArtLayers
         : (unit.pompom && entry.card.pompomArtLayers?.[unit.pompom]) || entry.card.artLayers;
     return { name: entry.card.displayName, artLayers, card: entry.card, roster: entry.roster };
   }

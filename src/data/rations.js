@@ -7,8 +7,8 @@ const RULES = {
   Bacon: (u) => u.nation === "britain" && u.type === "infantry",
   Wine: (u) => hasKind(u, "skirmisher"),
   Telescope: (u) => hasKeyword(u, "Scout") || u.type === "artillery",
-  // Doubles attack (and health for Scots), so it pays most on Scots and hard hitters.
-  "Claymore Sword": (u) => u.contingent === "Scots" || (u.type !== "artillery" && u.attack >= 5),
+  // On the Scots it is +3/+3 and +1/+1 to the rest of the army; elsewhere only +1/+1.
+  "Claymore Sword": (u) => u.contingent === "Scots",
   Eagle: (u) => u.nation === "france" && (u.tier >= 3 || u.attack + u.health >= 10),
 };
 

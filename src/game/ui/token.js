@@ -17,7 +17,7 @@ export function tokenHtml(data, unit, { where, index, selected = false, frozen =
   const layout = look.artLayers.length ? layoutSprites(look.artLayers, { ...TOKEN, maxH: look.card?.tokenMaxH ?? TOKEN.maxH }) : null;
   let art = layout ? spriteStageHtml(layout, "token__stage") : `<div class="token__noart">${escapeHtml(look.name)}</div>`;
   if (layout && def?.pompom && where === "line") art = art.replace(/<\/div>$/, () => pompomHotspot(layout, unit) + "</div>");
-  const weapon = weaponKey(unit.id, def?.type ?? "infantry");
+  const weapon = unit.dismounted ? "musket" : weaponKey(unit.id, def?.type ?? "infantry");
   const badges = companyBadges(def, unit);
   const label = `${look.name}, ${unit.attack} attack with ${WEAPONS[weapon].label.toLowerCase()}, ${unit.health} health, rank ${unit.rank}${
     badges.length ? `, ${badges.map((b) => (b === "skirmisher" ? "skirmishers" : "grenadiers")).join(" and ")} attached` : ""

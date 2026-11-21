@@ -33,6 +33,7 @@ export function simulateBattle(catalog, left, right) {
     cycleBuffs(b);
     skirmishCheck(b);
     riflemenCheck(b);
+    dismountCheck(b);
     squareChecks(b);
     artilleryPhase(b);
     let result = grenadiersAndCleanup(b);
@@ -59,7 +60,7 @@ function def(b, u) {
 }
 
 function snapshot(u) {
-  return { uid: u.uid, id: u.id, name: u.name, attack: u.attack, attackBonus: u.attackBonus, health: u.health, rank: u.rank, isSkirmisher: u.isSkirmisher, swarmCopy: !!u.swarmCopy, pompom: u.pompom };
+  return { uid: u.uid, id: u.id, name: u.name, attack: u.attack, attackBonus: u.attackBonus, health: u.health, rank: u.rank, isSkirmisher: u.isSkirmisher, swarmCopy: !!u.swarmCopy, pompom: u.pompom, dismounted: !!u.dismounted };
 }
 
 /** What the battle screen shows on a unit's badges: attack including bonuses, and health. */
@@ -194,6 +195,22 @@ function squareChecks(b) {
     u.squared = squared;
     u.attackBonus += squared ? b.rules.squareAttackBonus : -b.rules.squareAttackBonus;
     b.events.push({ type: "square", uid: u.uid, on: squared, stat: shown(u) });
+  }
+}
+
+// Designed ability (French dragoons, DeployFootDragoons.Dismount): facing
+// infantry that could form square, the dragoons get down and fight on foot as
+// infantry, so no square forms (and one already formed breaks up). They stay
+// on foot for the rest of the battle.
+function dismountCheck(b) {
+  for (const side of ["left", "right"]) {
+    const u = front(b, side);
+    const opp = front(b, other(side));
+    if (!u || !opp || u.dismounted || !def(b, u).dismount || u.type !== "cavalry") continue;
+    if (!opp.formsSquare || opp.isSkirmisher) continue;
+    u.dismounted = true;
+    u.type = "infantry";
+    b.events.push({ type: "dismount", side, uid: u.uid, unit: snapshot(u) });
   }
 }
 

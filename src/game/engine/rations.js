@@ -9,7 +9,6 @@ export function rationRefusal(catalog, run, rationId, unit) {
   if (rationId === "wine" && !def.skirmish) return "Wine is for battalions with skirmishers";
   if (rationId === "onion" && !def.grenadiers) return "Onions are for battalions with grenadiers";
   if (rationId === "telescope" && unit.telescope) return "This unit already has a telescope";
-  if (rationId === "claymore" && !["infantry", "cavalry", "artillery"].includes(unit.type)) return "The claymore cannot go on this unit";
   if (rationId === "colors" && extraRanksLeft(catalog, run) < 1) return "The shop is already at its highest rank";
   return null;
 }
@@ -64,8 +63,15 @@ export function applyRation(catalog, run, rationId, unit, rng) {
       events.push({ type: "note", uid: unit.uid, text: "Telescope" }, { type: "scout", uid: unit.uid });
       break;
     case "claymore":
-      if (unit.type === "artillery") add(unit, 1, 1);
-      else add(unit, unit.attack, scots.includes(unit.id) ? unit.health : 0);
+      // In Scots hands it rallies the army: +3/+3 to the Highlanders or Scots
+      // Greys carrying it and +1/+1 to every other infantry and cavalry unit.
+      // Anyone else just gets +1/+1.
+      if (!scots.includes(unit.id)) {
+        add(unit, 1, 1);
+        break;
+      }
+      add(unit, 3, 3);
+      army.filter((u) => u !== unit && (u.type === "infantry" || u.type === "cavalry")).forEach((u) => add(u, 1, 1));
       break;
     case "eagle":
       add(unit, unit.attack, unit.health);

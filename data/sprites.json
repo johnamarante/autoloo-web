@@ -30,6 +30,8 @@
     "britain/british_nassauvoltiguer_left_3_0_.svg": { "unityScale": 3, "size": [456, 431], "bounds": [87.5, 17.4, 335.1, 388.1] },
     "britain/british_nassaugrenadier_left_2_1_.svg": { "unityScale": 3, "size": [417, 400], "bounds": [78.5, 11.5, 316.1, 364.7] },
     "britain/british_belgianline_left.svg": { "unityScale": 3, "scaleSource": "estimated", "size": [525, 539], "bounds": [96.4, 50.1, 375, 365.4] },
+    "france/french_mounteddragoon_left_0_2_.svg": { "unityScale": 2.2, "scaleSource": "estimated", "size": [800, 728], "bounds": [24.1, 17.4, 682.4, 638.2] },
+    "france/french_dismounteddragoon_left_3_1_.svg": { "unityScale": 2.55, "scaleSource": "estimated", "size": [528, 504], "bounds": [89.5, 40.4, 403, 409.1] },
     "britain/british_dutchline_left.svg": { "unityScale": 3.25, "scaleSource": "estimated", "size": [391, 539], "bounds": [134.4, 34.5, 241.2, 445] },
     "britain/british_highlander_left_2_0_.svg": { "unityScale": 3.5, "size": [430, 432], "bounds": [73.5, 38.4, 333, 319.3] },
     "britain/lighthighlandfoot_left_outlined.svg": { "unityScale": 3, "scaleSource": "estimated", "size": [495, 495], "bounds": [90.5, 64.5, 354.1, 347] },

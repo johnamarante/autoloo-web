@@ -103,6 +103,22 @@
           ]
         },
         {
+          "id": "fr-dragoon",
+          "unitId": "french_dragoon",
+          "csvName": "Dragoons",
+          "displayName": "Dragons",
+          "role": "Dragoons",
+          "type": "cavalry",
+          "tier": 1,
+          "tierSource": "design",
+          "cost": 3,
+          "sprite": "france/french_mounteddragoon_left_0_2_.svg",
+          "dismountSprite": "france/french_dismounteddragoon_left_3_1_.svg",
+          "abilities": [
+            { "trigger": "front", "keyword": "Dismount", "text": "Facing infantry that could form square, they dismount and fight on foot with their muskets, so the enemy never forms square against them. They stay on foot for the rest of the battle." }
+          ]
+        },
+        {
           "id": "fr-lancer",
           "unitId": "french_lancer",
           "csvName": "Lancer",

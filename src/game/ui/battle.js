@@ -295,6 +295,16 @@ export function mountBattle(root, ctx) {
       floatText(e.uid, "+1 attack", "good");
       await wait(350);
     },
+    async dismount(e) {
+      const entry = units.get(e.uid);
+      if (entry) {
+        const square = entry.el.querySelector(".bunit__square")?.outerHTML ?? "";
+        entry.el.innerHTML = square + tokenHtml(data, e.unit, { where: "battle", index: 0, facing: entry.side === "left" ? "right" : "left" });
+      }
+      floatText(e.uid, "Dismount!", "info");
+      say("The dragoons dismount to fight on foot.");
+      await wait(450);
+    },
     async square(e) {
       units.get(e.uid)?.el.classList.toggle("is-square", e.on);
       setStat(e.stat);

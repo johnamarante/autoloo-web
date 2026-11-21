@@ -26,6 +26,7 @@
         "french_line",
         "french_chassuer",
         "french_hussar",
+        "french_dragoon",
         "french_lancer",
         "french_cuirassier",
         "french_carabineracheval",
@@ -72,6 +73,11 @@
       "kind": "hussar", "nation": "france", "type": "cavalry",
       "attack": 4, "health": 4, "maxRank": 6, "tier": 1, "cost": 3, "chance": 10,
       "scout": true, "winBuff": "minor"
+    },
+    "french_dragoon": {
+      "kind": "mounteddragoon", "nation": "france", "type": "cavalry",
+      "attack": 4, "health": 4, "maxRank": 6, "tier": 1, "cost": 3, "chance": 12,
+      "dismount": { "designed": true, "_about": "DeployFootDragoons.Dismount: fights on foot as infantry rather than charge a square." }
     },
     "french_lancer": {
       "kind": "lancer", "nation": "france", "type": "cavalry",
