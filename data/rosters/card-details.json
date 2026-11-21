@@ -392,6 +392,7 @@
           "tierSource": "design",
           "cost": 3,
           "sprite": "britain/british_dutchline_left.svg",
+          "tokenMaxH": 11.5,
           "abilities": [
             { "trigger": "shop", "keyword": "United Netherlands", "text": "Drafted together with the Belgian Line. Buy one, and the Belgian Line is free for the rest of the turn." }
           ]

@@ -3,6 +3,11 @@
 
 export const RELEASE_NOTES = [
   {
+    version: "1.10.1",
+    title: "A taller Dutchman",
+    notes: ["The Dutch Line is drawn about a third larger, so he stands as tall as the rest of the line instead of being shrunk to fit his raised musket."],
+  },
+  {
     version: "1.10",
     title: "Company pompoms",
     notes: [
