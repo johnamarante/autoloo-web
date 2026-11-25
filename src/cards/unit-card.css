@@ -147,18 +147,9 @@
   line-height: 1;
 }
 
-.ucard__tier small {
-  font-size: 0.48em;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  opacity: 0.8;
-  margin-top: 0.4em;
-}
-
 .ucard__tier span {
   font-family: "IM Fell English SC", Georgia, serif;
-  font-size: 1em;
-  margin-top: -0.6em;
+  font-size: 1.15em;
 }
 
 /* Art -------------------------------------------------------------------- */

@@ -87,7 +87,7 @@ function headerHtml(unit) {
         <p>${esc(subtitle)}</p>
       </div>
       <div class="ucard__tier" title="Shop rank ${unit.tier}: in the shop ${unit.shopWins ? `from ${unit.shopWins} wins` : "from the start"}${unit.tierSource === "guess" ? " (provisional)" : ""}">
-        <small>Shop</small><span>${ROMAN[unit.tier] ?? unit.tier}</span>
+        <span>${ROMAN[unit.tier] ?? unit.tier}</span>
       </div>
     </header>`;
 }
@@ -298,4 +298,19 @@ function rarity(share) {
 
 function esc(s) {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+}
+
+/**
+ * Shrinks a card placed in a fixed-size area until it fits that area's
+ * height. Cards with long ability lists run taller than the width-based size
+ * allows for; the card's text scales with its width, so a narrower card is a
+ * shorter one.
+ */
+export function fitCard(place, card) {
+  const room = place.clientHeight;
+  for (let i = 0; i < 4 && room > 0; i++) {
+    const { width, height } = card.getBoundingClientRect();
+    if (height <= room + 0.5) return;
+    card.style.setProperty("--ucard-w", `${Math.floor(width * (room / height) * 0.99)}px`);
+  }
 }

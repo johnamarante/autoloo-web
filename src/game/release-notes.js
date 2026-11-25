@@ -3,6 +3,16 @@
 
 export const RELEASE_NOTES = [
   {
+    version: "1.13",
+    title: "Yes, commander!",
+    notes: [
+      "Units now answer when you place them in your line. The French reply \"Oui!\", \"Oui, monsieur!\" or \"Oui, général!\". The British say \"Yes, commander!\", the Highlanders and Scots Greys give a Scottish \"Yes, sir!\", and the Dutch, Belgians, Nassauers and Brunswickers answer \"Ja!\".",
+      "Cavalry answer too, and then their horses whinny.",
+      "Unit cards with long ability lists now shrink to fit the screen instead of running off the bottom.",
+      "The shop rank badge on each unit card now shows just its numeral.",
+    ],
+  },
+  {
     version: "1.12",
     title: "Drunk and disorderly",
     notes: [

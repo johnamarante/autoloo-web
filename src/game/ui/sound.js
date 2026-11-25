@@ -113,6 +113,14 @@ export function sfx(name, { volume = 1 } = {}) {
   const el = new Audio(BASE + files[i]);
   el.volume = Math.min(1, (sound.volume ?? 1) * volume);
   el.play().catch(() => {});
+  return el;
+}
+
+/** Plays effects one after another, each once the last has finished. */
+export function sfxChain(names) {
+  const [first, ...rest] = names;
+  const el = first && sfx(first);
+  if (el && rest.length) el.addEventListener("ended", () => sfxChain(rest), { once: true });
 }
 
 /** Switches the music to a track from TRACKS; null stops it. */

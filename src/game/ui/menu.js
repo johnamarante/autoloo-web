@@ -1,7 +1,7 @@
 // Main menu (MainMenu.cs): resume a saved game, or choose a side. Each side
 // shows its roster; hovering a unit shows its card.
 import { createUnit } from "../engine/units.js";
-import { createUnitCard } from "../../cards/unit-card.js";
+import { createUnitCard, fitCard } from "../../cards/unit-card.js";
 import { tokenHtml, escapeHtml } from "./token.js";
 import { unitLook } from "./data.js";
 import { NAME_MAX } from "../net/player.js";
@@ -75,7 +75,9 @@ export function mountMenu(root, ctx) {
     const [nation, i] = token?.dataset.index.split(":") ?? [];
     const look = token && unitLook(data, preview[nation][Number(i)]);
     if (look?.card) {
-      place.append(createUnitCard(look.card, { roster: look.roster, rations: data.rations }));
+      const card = createUnitCard(look.card, { roster: look.roster, rations: data.rations });
+      place.append(card);
+      fitCard(place, card);
       return;
     }
     // The same placeholder as on the deployment screen.

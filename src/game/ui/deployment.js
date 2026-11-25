@@ -4,12 +4,13 @@
 import { canMerge } from "../engine/units.js";
 import { buy, buyRation, checkEndTurn, heartsLeft, move, priceOf, roll, sell, setPompom, shopRank, toggleFreeze, toggleRationFreeze } from "../engine/run.js";
 import { rationRefusal } from "../engine/rations.js";
-import { createUnitCard } from "../../cards/unit-card.js";
+import { createUnitCard, fitCard } from "../../cards/unit-card.js";
 import { layoutSprites, spriteStageHtml } from "../../cards/sprite-art.js";
 import { saveRun } from "./save.js";
 import { escapeHtml, tokenHtml } from "./token.js";
 import { unitLook } from "./data.js";
-import { sfx } from "./sound.js";
+import { sfx, sfxChain } from "./sound.js";
+import { deploySounds } from "./sound-list.js";
 
 const UI = new URL("../../../assets/ui/", import.meta.url).href;
 const RATIONS = new URL("../../../assets/rations/", import.meta.url).href;
@@ -248,6 +249,7 @@ export function mountDeployment(root, ctx) {
     }
     const card = createUnitCard(look.card, { roster: look.roster, rations: data.rations, rank: Math.min(unit.rank, look.card.maxRank) });
     place.append(card);
+    fitCard(place, card);
   }
 
   function rationCardHtml(id) {
@@ -287,6 +289,7 @@ export function mountDeployment(root, ctx) {
       if (e.type === "free") announceFree(e.id);
     }
     if (result.action === "ration") sfx("rankUp");
+    if (result.action === "deploy" && result.unit) sfxChain(deploySounds(result.unit, run.nation));
     if (result.action === "sell") floatAt(root.querySelector('[data-act="roll"]'), `+${1 + Math.floor(result.unit.rank / 3)} coin`);
     return true;
   }

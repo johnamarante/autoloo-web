@@ -6,10 +6,33 @@
 
 const cannonFire = [2, 3, 4, 6, 7, 9, 10].map((n) => `cannon-fire-${n}.mp3`);
 
+/** The language each unit answers in; any unit not listed speaks its nation's. */
+const VOICE_BY_NATION = { france: "french", britain: "english", prussia: "german" };
+const VOICE_BY_UNIT = {
+  british_nassaurfusilier: "german",
+  british_brunswickline: "german",
+  british_dutchline: "german", // Dutch "Ja!" is the same word
+  british_belgianline: "german", // no French from the Allied side: it is too confusing
+  british_highlander: "scottish",
+  british_socttsgreysdragoons: "scottish",
+};
+
+/** The sounds a unit makes when placed in the line, in order: its voice, then horses for cavalry. */
+export function deploySounds(unit, nation) {
+  const voice = `voice_${VOICE_BY_UNIT[unit.id] ?? VOICE_BY_NATION[nation] ?? "english"}`;
+  return unit.type === "cavalry" ? [voice, "deploy_cavalry"] : [voice];
+}
+
 export const SOUNDS = {
   coin: { files: ["coin.mp3"] }, // Deployment.Roll, paying for a re-roll
   rankUp: { files: ["rank-up.mp3"] }, // a unit ranks up by merging (rank_up_or_ration_consumed.mp3)
   bugle: { files: ["bugle.mp3"], volume: 0.7 }, // a new shop is drawn
+  deploy_cavalry: { files: ["deploy-cavalry.mp3"] }, // a cavalry unit is placed in the line (deployed_cavalry.mp3)
+  // Every unit answers the player when placed in the line; cavalry then whinny.
+  voice_french: { files: ["voice-oui.mp3", "voice-oui-monsieur.mp3", "voice-oui-general.mp3"] }, // french_oui, _oui_monsieur, _oui_general
+  voice_english: { files: ["voice-yes-commander.mp3"] }, // british_yes_commander
+  voice_scottish: { files: ["voice-scottish-yes-sir.mp3"] }, // british_scottish_yes_sir
+  voice_german: { files: ["voice-ja.mp3"] }, // german_ja
   cannonFire: { files: cannonFire }, // GameManager.PlayCannonballFire
   cannonHit: { files: ["cannon-hit-1.mp3", "cannon-hit-2.mp3"] }, // Cannonball impact
   grapeshot: { files: ["grapeshot.mp3"] }, // canister from the front
