@@ -3,6 +3,11 @@
 
 export const RELEASE_NOTES = [
   {
+    version: "1.13.1",
+    title: "Cards fixed on phones",
+    notes: ["On some phones, unit cards were squeezed into a narrow column with their text spilling out. Long cards now shrink evenly as a whole to fit the screen."],
+  },
+  {
     version: "1.13",
     title: "Yes, commander!",
     notes: [

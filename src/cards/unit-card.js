@@ -302,15 +302,15 @@ function esc(s) {
 
 /**
  * Shrinks a card placed in a fixed-size area until it fits that area's
- * height. Cards with long ability lists run taller than the width-based size
- * allows for; the card's text scales with its width, so a narrower card is a
- * shorter one.
+ * height, by scaling the whole card. (Narrowing it instead goes wrong on
+ * phones with a minimum font size or larger text: the text stops shrinking
+ * with the card, wraps more, and the card gets taller as it gets narrower.)
  */
 export function fitCard(place, card) {
+  card.style.transform = "";
   const room = place.clientHeight;
-  for (let i = 0; i < 4 && room > 0; i++) {
-    const { width, height } = card.getBoundingClientRect();
-    if (height <= room + 0.5) return;
-    card.style.setProperty("--ucard-w", `${Math.floor(width * (room / height) * 0.99)}px`);
-  }
+  const height = card.offsetHeight;
+  if (room <= 0 || height <= room) return;
+  card.style.transformOrigin = "top center";
+  card.style.transform = `scale(${room / height})`;
 }
